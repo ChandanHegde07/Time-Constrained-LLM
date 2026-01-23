@@ -1,4 +1,4 @@
-# ⏱Time-Constrained LLM System
+# Time-Constrained LLM System
 
 A lightweight LLM pressure-testing system that simulates strict time constraints to study how large language models behave under urgency and forced cutoffs.
 
@@ -104,4 +104,4 @@ max_tokens: 500
 
 ---
 
-**Built with ⚡ for LLM research and experimentation**
+**Built with for LLM research and experimentation**
