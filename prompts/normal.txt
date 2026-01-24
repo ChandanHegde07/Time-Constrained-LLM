@@ -1,0 +1,41 @@
+# Normal Task Prompts - No Time Pressure
+# =====================================
+
+## Reasoning Tasks
+1. Solve the following logical reasoning problem step by step:
+   "If all mammals are warm-blooded and all dogs are mammals, what can we conclude about dogs?"
+
+2. Analyze this scenario and provide a logical solution:
+   "You have a 3-gallon jug and a 5-gallon jug. How can you measure exactly 4 gallons of water?"
+
+## Creative Tasks
+3. Write a short creative story about:
+   "A character who discovers they can communicate with plants"
+
+4. Create a poem about:
+   "The beauty of morning dew on grass"
+
+## QA Tasks
+5. What is the capital of Japan and why is it significant?
+
+6. Explain the process of photosynthesis in simple terms.
+
+## Analytical Tasks
+7. Analyze this sales data and provide insights:
+   - January: $45,000
+   - February: $52,000  
+   - March: $48,000
+   - April: $61,000
+
+8. Evaluate this product review sentiment:
+   "The product works well but the battery life is disappointing."
+
+## Coding Tasks
+9. Write a Python function to calculate the factorial of a number.
+
+10. Implement a simple calculator in Python that can add, subtract, multiply, and divide.
+
+## Problem Solving Tasks
+11. Calculate the area of a triangle with base 10 cm and height 8 cm.
+
+12. If a car travels at 60 mph for 2.5 hours, how far does it travel?
