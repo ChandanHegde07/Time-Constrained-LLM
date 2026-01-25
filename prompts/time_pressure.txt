@@ -1,0 +1,37 @@
+# Time Pressure Task Prompts - Urgency Cues
+# =========================================
+
+## Rapid Reasoning Tasks
+1. SOLVE THIS QUICKLY! You have 3 SECONDS:
+   "If all birds can fly and a sparrow is a bird, can a sparrow fly?"
+
+2. THINK FAST! 5 SECONDS TO ANSWER:
+   "You have 2 apples and 3 oranges. How many fruits do you have total?"
+
+## Time-Boxed Coding
+3. CODE IN 60 SECONDS OR LESS:
+   "Write a Python function to reverse a string"
+
+4. RAPID DEVELOPMENT: 90 SECONDS MAX:
+   "Implement a Python program to check if a number is prime"
+
+## Concise Summarization
+5. SUMMARIZE IN 30 SECONDS:
+   "The Industrial Revolution was a period of rapid economic and social change that began in Britain in the late 18th century. It transformed manufacturing processes, transportation, and communication, leading to the rise of factories, urbanization, and new social classes."
+
+6. QUICK SUMMARY: 45 SECONDS:
+   "Photosynthesis is the process by which plants, algae, and some bacteria convert sunlight, carbon dioxide, and water into glucose (a type of sugar) and oxygen. This process is essential for life on Earth as it produces oxygen and serves as the foundation of most food chains."
+
+## Pressure Testing
+7. EMERGENCY RESPONSE: 2 SECONDS TO DECIDE:
+   "A child is drowning in a pool. You are the only one nearby. What do you do?"
+
+8. CRITICAL DECISION: 4 SECONDS:
+   "A fire breaks out in your building. The stairs are blocked. What's your first move?"
+
+## Quick Analysis
+9. RAPID ANALYSIS: 10 SECONDS:
+   "Sales data: Q1 $100k, Q2 $150k, Q3 $120k. What's the trend?"
+
+10. FAST EVALUATION: 15 SECONDS:
+    "Product review: 'Fast shipping but the product broke after 2 days.' What's the key issue?"
