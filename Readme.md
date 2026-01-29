@@ -608,7 +608,6 @@ flake8 .
 - Partial response comprehensiveness
 - Generation speed across difficulty levels
 - Cognitive load impact on LLM performance
-- Error patterns under time constraints
 
 ---
 
