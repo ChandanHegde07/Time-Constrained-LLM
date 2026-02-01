@@ -16,7 +16,7 @@ Key capabilities:
 - **Force early cutoffs** and record partial responses with reasoning
 - **Compare normal vs time-pressured prompts** automatically
 - **Measure comprehensive metrics**: completion rate, timing, output quality, token efficiency
-- **Support multiple LLM providers**: OpenAI, Anthropic, Google, and local testing
+- **Support Google LLM provider**: Google Gemini models for time-constrained testing
 - **Advanced statistical analysis**: correlation, distribution, confidence intervals
 - **Dynamic task generation**: diverse cognitive domains, difficulty levels, response formats
 
@@ -37,7 +37,7 @@ Key capabilities:
 ## Core Components
 
 ### LLM Module ([`core/llm.py`](core/llm.py))
-- **Provider Support**: OpenAI (GPT-4, GPT-3.5), Anthropic (Claude), Google (PaLM), Local simulation
+- **Provider Support**: Google (Gemini models)
 - **Time Management**: Thread-based timeout with streaming cancellation
 - **Response Types**: Complete, partial, timed-out, and error responses
 - **Caching**: Response caching with cache key management
@@ -130,9 +130,7 @@ time-constrained-llm/
 ### Prerequisites
 
 - Python 3.8 or higher
-- OpenAI API key (for OpenAI integration)
-- Anthropic API key (for Anthropic integration, optional)
-- Google API key (for Google integration, optional)
+- Google API key (for Google Gemini integration)
 
 ### Installation
 
@@ -149,9 +147,9 @@ time-constrained-llm/
 
 3. Configure API keys in `.env` file:
    ```
-   LLM_API_KEY=your_openai_api_key
-   LLM_PROVIDER=openai
-   LLM_MODEL=gpt-4
+   LLM_API_KEY=your_google_api_key
+   LLM_PROVIDER=google
+   LLM_MODEL=gemini-1.5-flash
    ```
 
 ### Quick Start
@@ -214,7 +212,7 @@ from core.llm import get_llm_manager
 
 # Custom configuration
 config = get_config()
-config.llm.model = "gpt-3.5-turbo"
+config.llm.model = "gemini-1.5-flash"
 config.timer.time_limits = [3, 6, 9]
 config.timer.precision = 0.001
 
@@ -286,8 +284,8 @@ Key configuration options in `.env` file:
 ENVIRONMENT=development
 
 # LLM Configuration
-LLM_PROVIDER=openai
-LLM_MODEL=gpt-4
+LLM_PROVIDER=google
+LLM_MODEL=gemini-1.5-flash
 LLM_API_KEY=your_api_key
 LLM_MAX_TOKENS=500
 LLM_TEMPERATURE=0.7
