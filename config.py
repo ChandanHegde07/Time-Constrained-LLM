@@ -20,16 +20,19 @@ class Environment(Enum):
             return cls.DEVELOPMENT
 
 class ModelProvider(Enum):
-    OPENAI = "openai"
-    ANTHROPIC = "anthropic"
     GOOGLE = "google"
-    AZURE = "azure"
-    LOCAL = "local"
+
+    @classmethod
+    def from_str(cls, value: str) -> "ModelProvider":
+        try:
+            return cls(value.strip().lower())
+        except ValueError:
+            return cls.GOOGLE
 
 @dataclass
 class LLMConfig:
-    provider: ModelProvider = ModelProvider.OPENAI
-    model: str = "gpt-4"
+    provider: ModelProvider = ModelProvider.GOOGLE
+    model: str = "gemini-1.5-flash"
     api_key: str = ""
     base_url: Optional[str] = None
     max_tokens: int = 500
@@ -178,9 +181,9 @@ class ConfigManager:
 
         # Load LLM configuration
         config.llm.provider = ModelProvider.from_str(
-            os.getenv("LLM_PROVIDER", "openai")
+            os.getenv("LLM_PROVIDER", "google")
         )
-        config.llm.model = os.getenv("LLM_MODEL", config.llm.model)
+        config.llm.model = os.getenv("LLM_MODEL", "gemini-1.5-flash")
         config.llm.api_key = os.getenv("LLM_API_KEY", config.llm.api_key)
         config.llm.base_url = os.getenv("LLM_BASE_URL")
         config.llm.max_tokens = int(os.getenv("LLM_MAX_TOKENS", config.llm.max_tokens))
@@ -412,8 +415,8 @@ class ConfigManager:
             errors.append("At least one time limit must be specified")
 
         # Validate LLM configuration
-        if config.llm.provider != ModelProvider.LOCAL and not config.llm.api_key:
-            errors.append("API key is required for non-local LLM providers")
+        if not config.llm.api_key:
+            errors.append("API key is required for Google LLM provider")
         if config.llm.max_tokens <= 0:
             errors.append(f"Max tokens must be positive: {config.llm.max_tokens}")
         if not (0 <= config.llm.temperature <= 2):
