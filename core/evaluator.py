@@ -1,6 +1,7 @@
 import time
 import json
 import csv
+import threading
 from typing import Any, Callable, Dict, List, Optional, Tuple
 from dataclasses import dataclass, field
 from enum import Enum
@@ -155,6 +156,9 @@ class MetricCalculator:
 
 
 class StatisticalAnalyzer:
+    def __init__(self, config=None):
+        self.config = config or get_config().evaluation
+    
     def analyze_results(self, results: List[EvaluationResult]) -> Dict[str, Any]:
         if not results:
             return {}
@@ -182,8 +186,8 @@ class StatisticalAnalyzer:
         return analysis
 
     def _calculate_basic_statistics(self, results: List[EvaluationResult]) -> Dict:
-        scores = [r.metrics["quality_score"] for r in results]
-        times = [r.metrics["response_time"] for r in results]
+        scores = [r.metrics.get("quality_score", 0) for r in results]
+        times = [r.metrics.get("response_time", 0) for r in results]
 
         return {
             "count": len(results),

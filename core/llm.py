@@ -87,6 +87,7 @@ class LLMBase:
         )
 
     def _handle_error(self, error_message: str) -> LLMResponse:
+        print(f"LLM Error: {error_message}")  # Log the error for debugging
         return LLMResponse(
             content=f"Error: {error_message}",
             status=LLMResponseStatus.ERROR,
@@ -106,24 +107,28 @@ class GoogleLLM(LLMBase):
     def __init__(self, config=None):
         super().__init__(config)
         try:
-            import google.generativeai as genai
-            genai.configure(api_key=self.config.api_key)
-            self.model = genai.GenerativeModel(self.config.model)
+            from google import genai
+            self.client = genai.Client(api_key=self.config.api_key)
         except ImportError:
             raise ImportError(
-                "google-generativeai package not found. Install with: pip install google-generativeai"
+                "google-genai package not found. Install with: pip install google-genai"
             )
 
     def _generate_response(self, prompt: str, **kwargs) -> LLMResponse:
         start_time = time.time()
 
         try:
-            response = self.model.generate_content(
-                prompt,
-                generation_config={
+            # Filter out kwargs that are not valid for GenerateContentConfig
+            valid_config_keys = {"temperature", "max_output_tokens", "top_p", "top_k", "candidate_count", "stop_sequences", "max_output_tokens"}
+            filtered_kwargs = {k: v for k, v in kwargs.items() if k in valid_config_keys}
+            
+            response = self.client.models.generate_content(
+                model=self.config.model,
+                contents=prompt,
+                config={
                     "temperature": self.config.temperature,
                     "max_output_tokens": self.config.max_tokens,
-                    **kwargs
+                    **filtered_kwargs
                 }
             )
 

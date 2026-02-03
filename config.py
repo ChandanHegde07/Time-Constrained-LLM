@@ -32,7 +32,7 @@ class ModelProvider(Enum):
 @dataclass
 class LLMConfig:
     provider: ModelProvider = ModelProvider.GOOGLE
-    model: str = "gemini-1.5-flash"
+    model: str = "gemini-2.5-flash-lite"
     api_key: str = ""
     base_url: Optional[str] = None
     max_tokens: int = 500
