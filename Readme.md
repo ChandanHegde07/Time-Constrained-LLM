@@ -237,40 +237,6 @@ print(f"Response Status: {response.status}")
 print(f"Content: {response.content}")
 print(f"Time Elapsed: {response.time_elapsed:.2f}s")
 ```
-
-### Batch Processing
-
-```python
-from tasks import get_task_manager
-from core.router import get_routing_manager
-from core.evaluator import get_evaluator
-
-# Generate a batch of tasks
-task_manager = get_task_manager()
-batch = task_manager.generate_benchmark_batch(
-    count=20,
-    time_pressure_ratio=0.6
-)
-
-# Process with routing
-routing_manager = get_routing_manager()
-for task, prompt, time_limit, is_pressure in batch:
-    task_id = routing_manager.add_task(
-        task_type=task.category.value,
-        prompt=prompt,
-        time_limit=time_limit,
-        priority="high" if time_pressure else "normal"
-    )
-
-# Evaluate results
-evaluator = get_evaluator()
-stats = evaluator.get_statistics()
-analysis = evaluator.get_analysis()
-
-print(f"Completion Rate: {stats.avg_completion_rate:.1%}")
-print(f"Average Response Time: {stats.avg_response_time:.2f}s")
-```
-
 ---
 
 ## Configuration Options
