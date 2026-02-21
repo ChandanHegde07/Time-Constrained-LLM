@@ -22,16 +22,16 @@ class ExperimentStatus(Enum):
 @dataclass
 class ExperimentConfig:
     experiment_name: str
-    task_count: int = 10
-    time_limits: List[float] = field(default_factory=lambda: [3.0, 5.0, 10.0])
-    task_categories: List[str] = field(default_factory=lambda: ["reasoning", "creative", "qa"])
-    difficulty_levels: List[int] = field(default_factory=lambda: [2, 3, 4])
-    time_pressure_ratio: float = 0.5
-    quality_scoring_enabled: bool = False
+    task_count: int = 30
+    time_limits: List[float] = field(default_factory=lambda: [1.0, 2.0, 3.0, 5.0, 10.0, 15.0, 30.0])
+    task_categories: List[str] = field(default_factory=lambda: ["reasoning", "creative", "qa", "analytical", "problem_solving"])
+    difficulty_levels: List[int] = field(default_factory=lambda: [1, 2, 3, 4, 5])
+    time_pressure_ratio: float = 0.6
+    quality_scoring_enabled: bool = True
     statistical_analysis_enabled: bool = True
     output_formats: List[str] = field(default_factory=lambda: ["json", "csv"])
     log_level: str = "INFO"
-    timeout: float = 300.0
+    timeout: float = 600.0
 
 
 @dataclass
@@ -247,6 +247,52 @@ class ExperimentRunner:
         self._logger.info("Average output length: %.1f characters",
                          statistics.avg_output_length)
 
+        # Log quality scores if enabled
+        if self.config.quality_scoring_enabled and statistics.quality_scores:
+            self._logger.info("=== Quality Scores by Time Limit ===")
+            for time_limit, score in statistics.quality_scores.items():
+                self._logger.info("  Time limit %.1fs: %.2f", time_limit, score)
+
+        # Log statistical analysis if enabled
+        if self.config.statistical_analysis_enabled and analysis:
+            self._logger.info("=== Statistical Analysis ===")
+            
+            # Time limit effects
+            if "time_limit_effects" in analysis:
+                self._logger.info("--- Time Limit Effects ---")
+                for time_limit, data in analysis["time_limit_effects"].items():
+                    self._logger.info(
+                        "  Limit %.1fs: quality=%.2f, completion=%.1f%%, response_time=%.2fs",
+                        time_limit,
+                        data.get("avg_quality", 0),
+                        data.get("completion_rate", 0) * 100,
+                        data.get("avg_response_time", 0)
+                    )
+            
+            # Task type effects
+            if "task_type_effects" in analysis:
+                self._logger.info("--- Task Type Effects ---")
+                for task_type, data in analysis["task_type_effects"].items():
+                    self._logger.info(
+                        "  %s: quality=%.2f, completion=%.1f%%",
+                        task_type,
+                        data.get("avg_quality", 0),
+                        data.get("completion_rate", 0) * 100
+                    )
+            
+            # Confidence intervals
+            if "confidence_intervals" in analysis:
+                self._logger.info("--- Confidence Intervals (95%) ---")
+                for metric, data in analysis["confidence_intervals"].items():
+                    ci = data.get("confidence_interval", {})
+                    self._logger.info(
+                        "  %s: mean=%.2f, CI=[%.2f, %.2f]",
+                        metric,
+                        data.get("mean", 0),
+                        ci.get("lower", 0),
+                        ci.get("upper", 0)
+                    )
+
         # Export results
         for format in self.config.output_formats:
             try:
@@ -307,12 +353,12 @@ class ExperimentFactory:
     def create_quick_test(cls, name: str = "quick_test") -> ExperimentRunner:
         config = ExperimentConfig(
             experiment_name=name,
-            task_count=3,
-            time_limits=[5.0, 10.0],
+            task_count=10,
+            time_limits=[1.0, 2.0, 3.0, 5.0],
             task_categories=["reasoning", "qa"],
             difficulty_levels=[2, 3],
-            time_pressure_ratio=0.5,
-            quality_scoring_enabled=False,
+            time_pressure_ratio=0.7,
+            quality_scoring_enabled=True,
             statistical_analysis_enabled=True,
             output_formats=["json"],
             log_level="INFO",
@@ -324,15 +370,33 @@ class ExperimentFactory:
     def create_comprehensive_test(cls, name: str = "comprehensive_test") -> ExperimentRunner:
         config = ExperimentConfig(
             experiment_name=name,
-            task_count=50,
-            time_limits=[3.0, 5.0, 10.0, 15.0, 30.0],
+            task_count=100,
+            time_limits=[1.0, 2.0, 3.0, 5.0, 10.0, 15.0, 30.0],
             task_categories=["reasoning", "creative", "qa", "analytical", "problem_solving"],
             difficulty_levels=[1, 2, 3, 4, 5],
-            time_pressure_ratio=0.5,
+            time_pressure_ratio=0.6,
             quality_scoring_enabled=True,
             statistical_analysis_enabled=True,
             output_formats=["json", "csv"],
             log_level="DEBUG",
+            timeout=1200.0
+        )
+        return ExperimentRunner(config)
+
+    @classmethod
+    def create_time_pressure_test(cls, name: str = "time_pressure_test") -> ExperimentRunner:
+        """Create experiment specifically for testing time pressure effects with shorter limits."""
+        config = ExperimentConfig(
+            experiment_name=name,
+            task_count=50,
+            time_limits=[0.5, 1.0, 1.5, 2.0, 3.0, 5.0],
+            task_categories=["reasoning", "creative", "qa", "analytical"],
+            difficulty_levels=[2, 3, 4],
+            time_pressure_ratio=0.8,
+            quality_scoring_enabled=True,
+            statistical_analysis_enabled=True,
+            output_formats=["json", "csv"],
+            log_level="INFO",
             timeout=600.0
         )
         return ExperimentRunner(config)
@@ -388,22 +452,22 @@ def main():
 
     parser.add_argument("--name", default="default_experiment",
                        help="Experiment name")
-    parser.add_argument("--tasks", type=int, default=10,
+    parser.add_argument("--tasks", type=int, default=30,
                        help="Number of tasks")
     parser.add_argument("--time-limits", nargs='+', type=float,
-                       default=[3.0, 5.0, 10.0],
+                       default=[1.0, 2.0, 3.0, 5.0, 10.0, 30.0],
                        help="Time limits for tasks")
     parser.add_argument("--categories", nargs='+',
-                       default=["reasoning", "creative", "qa"],
+                       default=["reasoning", "creative", "qa", "analytical", "problem_solving"],
                        help="Task categories")
     parser.add_argument("--difficulty", nargs='+', type=int,
-                       default=[2, 3, 4],
+                       default=[1, 2, 3, 4, 5],
                        help="Difficulty levels (1-5)")
-    parser.add_argument("--pressure-ratio", type=float, default=0.5,
+    parser.add_argument("--pressure-ratio", type=float, default=0.6,
                        help="Time pressure ratio (0-1)")
-    parser.add_argument("--no-quality-scoring", action="store_false",
+    parser.add_argument("--quality-scoring", action="store_true", default=True,
                        dest="quality_scoring",
-                       help="Disable quality scoring")
+                       help="Enable quality scoring")
     parser.add_argument("--output-formats", nargs='+',
                        default=["json", "csv"],
                        help="Output formats")
@@ -411,6 +475,10 @@ def main():
                        help="Log level (DEBUG, INFO, WARNING, ERROR, CRITICAL)")
     parser.add_argument("--quick-test", action="store_true",
                        help="Run quick test configuration")
+    parser.add_argument("--comprehensive", action="store_true",
+                       help="Run comprehensive test configuration")
+    parser.add_argument("--time-pressure", action="store_true",
+                       help="Run time pressure test with shorter limits")
 
     args = parser.parse_args()
 
@@ -420,6 +488,10 @@ def main():
     try:
         if args.quick_test:
             experiment = ExperimentFactory.create_quick_test(args.name)
+        elif args.comprehensive:
+            experiment = ExperimentFactory.create_comprehensive_test(args.name)
+        elif args.time_pressure:
+            experiment = ExperimentFactory.create_time_pressure_test(args.name)
         else:
             config = ExperimentConfig(
                 experiment_name=args.name,
@@ -432,7 +504,7 @@ def main():
                 statistical_analysis_enabled=True,
                 output_formats=args.output_formats,
                 log_level=args.log_level,
-                timeout=300.0
+                timeout=600.0
             )
             experiment = ExperimentRunner(config)
 

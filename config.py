@@ -47,7 +47,7 @@ class LLMConfig:
 
 @dataclass
 class TimerConfig:
-    time_limits: List[float] = field(default_factory=lambda: [3.0, 5.0, 10.0, 30.0])
+    time_limits: List[float] = field(default_factory=lambda: [1.0, 2.0, 3.0, 5.0, 10.0, 30.0])
     cutoff_strategy: str = "immediate"
     grace_period: float = 0.1
     precision: float = 0.01
@@ -72,7 +72,7 @@ class EvaluationConfig:
         "output_length",
         "quality_score"
     ])
-    quality_scoring_enabled: bool = False
+    quality_scoring_enabled: bool = True
     enable_statistical_analysis: bool = True
     confidence_interval: float = 0.95
     sample_size: int = 100
