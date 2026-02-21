@@ -302,6 +302,8 @@ class ExperimentRunner:
                 self._logger.error("Failed to save results in %s format: %s", format, e)
 
     def _get_result(self) -> ExperimentResult:
+        # Sort results by task_id to ensure ascending order
+        sorted_results = sorted(self._results, key=lambda r: r.task_id)
         return ExperimentResult(
             experiment_name=self.config.experiment_name,
             configuration=self.config,
@@ -309,7 +311,7 @@ class ExperimentRunner:
             start_time=self._start_time,
             end_time=self._end_time,
             duration=self._end_time - self._start_time,
-            results=self._results,
+            results=sorted_results,
             statistics=self._evaluator.get_statistics(),
             analysis=self._evaluator.get_analysis()
         )
@@ -360,7 +362,7 @@ class ExperimentFactory:
             time_pressure_ratio=0.7,
             quality_scoring_enabled=True,
             statistical_analysis_enabled=True,
-            output_formats=["json"],
+            output_formats=["json", "csv"],
             log_level="INFO",
             timeout=300.0
         )

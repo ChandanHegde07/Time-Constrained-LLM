@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Time Constrained LLM Testing System</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="logo">
+                <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="20" cy="20" r="18" stroke="#4F46E5" stroke-width="3"/>
+                    <path d="M12 20L18 26L28 14" stroke="#4F46E5" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <h1>Time Constrained LLM Testing</h1>
+            </div>
+            <p class="subtitle">Test LLM performance under various time constraints</p>
+        </header>
+
+        <main class="main-content">
+            <!-- Configuration Panel -->
+            <section class="config-panel">
+                <h2>Experiment Configuration</h2>
+                <form id="experimentForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="experiment_name">Experiment Name</label>
+                            <input type="text" id="experiment_name" name="experiment_name" value="web_experiment" placeholder="Enter experiment name">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="task_count">Number of Tasks</label>
+                            <input type="number" id="task_count" name="task_count" value="10" min="1" max="100">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="time_pressure_ratio">Time Pressure Ratio</label>
+                            <div class="slider-container">
+                                <input type="range" id="time_pressure_ratio" name="time_pressure_ratio" min="0" max="1" step="0.1" value="0.6">
+                                <span class="slider-value" id="pressure_value">0.6</span>
+                            </div>
+                            <small>Higher = more time-constrained tasks</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="log_level">Log Level</label>
+                            <select id="log_level" name="log_level">
+                                <option value="DEBUG">DEBUG</option>
+                                <option value="INFO" selected>INFO</option>
+                                <option value="WARNING">WARNING</option>
+                                <option value="ERROR">ERROR</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group full-width">
+                            <label>Time Limits (seconds)</label>
+                            <div class="checkbox-group" id="time_limits">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="time_limits" value="1.0">
+                                    <span>1s</span>
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="time_limits" value="2.0">
+                                    <span>2s</span>
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="time_limits" value="3.0" checked>
+                                    <span>3s</span>
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="time_limits" value="5.0" checked>
+                                    <span>5s</span>
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="time_limits" value="10.0" checked>
+                                    <span>10s</span>
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="time_limits" value="15.0">
+                                    <span>15s</span>
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="time_limits" value="30.0">
+                                    <span>30s</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group full-width">
+                            <label>Task Categories</label>
+                            <div class="checkbox-group" id="task_categories">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="task_categories" value="reasoning" checked>
+                                    <span>Reasoning</span>
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="task_categories" value="creative" checked>
+                                    <span>Creative</span>
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="task_categories" value="qa" checked>
+                                    <span>Q&A</span>
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="task_categories" value="analytical" checked>
+                                    <span>Analytical</span>
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="task_categories" value="problem_solving" checked>
+                                    <span>Problem Solving</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="switch-label">
+                                <input type="checkbox" id="quality_scoring_enabled" name="quality_scoring_enabled" checked>
+                                <span class="switch-text">Enable Quality Scoring</span>
+                            </label>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="switch-label">
+                                <input type="checkbox" id="statistical_analysis_enabled" name="statistical_analysis_enabled" checked>
+                                <span class="switch-text">Enable Statistical Analysis</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="button-group">
+                        <button type="button" id="startBtn" class="btn btn-primary">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                <path d="M6 4L16 10L6 16V4Z" fill="currentColor"/>
+                            </svg>
+                            Start Experiment
+                        </button>
+                        <button type="button" id="stopBtn" class="btn btn-danger" disabled>
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                <rect x="4" y="4" width="12" height="12" fill="currentColor"/>
+                            </svg>
+                            Stop
+                        </button>
+                        <button type="button" id="resetBtn" class="btn btn-secondary">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                <path d="M4 10C4 6.686 6.686 4 10 4C13.314 4 16 6.686 16 10C16 13.314 13.314 16 10 16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                <path d="M10 4V8L13 10L10 12V16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            Reset
+                        </button>
+                    </div>
+                </form>
+            </section>
+
+            <!-- Status Panel -->
+            <section class="status-panel">
+                <h2>Experiment Status</h2>
+                <div class="status-indicator">
+                    <div class="status-dot" id="statusDot"></div>
+                    <span id="statusText">Ready</span>
+                </div>
+                
+                <div class="progress-container">
+                    <div class="progress-info">
+                        <span>Progress</span>
+                        <span id="progressText">0%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="totalTasks">0</div>
+                        <div class="stat-label">Total Tasks</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="completedTasks">0</div>
+                        <div class="stat-label">Completed</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="timedOutTasks">0</div>
+                        <div class="stat-label">Timed Out</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="errorTasks">0</div>
+                        <div class="stat-label">Errors</div>
+                    </div>
+                </div>
+
+                <div class="duration-display">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+                        <path d="M12 6V12L16 14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    <span>Duration: <strong id="duration">0.0s</strong></span>
+                </div>
+            </section>
+
+            <!-- Logs Panel -->
+            <section class="logs-panel">
+                <div class="logs-header">
+                    <h2>Experiment Logs</h2>
+                    <button type="button" id="clearLogsBtn" class="btn-small">Clear</button>
+                </div>
+                <div class="logs-container" id="logsContainer">
+                    <div class="log-entry system">System ready. Configure and start an experiment.</div>
+                </div>
+            </section>
+
+            <!-- Results Panel -->
+            <section class="results-panel" id="resultsPanel">
+                <div class="results-header">
+                    <h2>Results</h2>
+                    <div class="results-actions">
+                        <button type="button" id="exportJsonBtn" class="btn-small" disabled>Export JSON</button>
+                        <button type="button" id="exportCsvBtn" class="btn-small" disabled>Export CSV</button>
+                    </div>
+                </div>
+
+                <!-- Statistics Summary -->
+                <div class="results-summary" id="resultsSummary" style="display: none;">
+                    <h3>Statistics Summary</h3>
+                    <div class="summary-grid">
+                        <div class="summary-item">
+                            <span class="summary-label">Total Tasks</span>
+                            <span class="summary-value" id="statTotalTasks">-</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">Completion Rate</span>
+                            <span class="summary-value" id="statCompletionRate">-</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">Avg Response Time</span>
+                            <span class="summary-value" id="statAvgResponseTime">-</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">Avg Quality Score</span>
+                            <span class="summary-value" id="statAvgQuality">-</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">Avg Output Length</span>
+                            <span class="summary-value" id="statAvgOutput">-</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">Success Rate</span>
+                            <span class="summary-value" id="statSuccessRate">-</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Results Table -->
+                <div class="results-table-container">
+                    <table class="results-table" id="resultsTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Type</th>
+                                <th>Time Limit</th>
+                                <th>Elapsed</th>
+                                <th>Status</th>
+                                <th>Quality</th>
+                            </tr>
+                        </thead>
+                        <tbody id="resultsBody">
+                            <tr class="empty-row">
+                                <td colspan="6">No results yet. Run an experiment to see results.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+
+        <footer class="footer">
+            <p>Time Constrained LLM Testing System &copy; 2024</p>
+        </footer>
+    </div>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>
