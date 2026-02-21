@@ -22,6 +22,7 @@ By enforcing hard time limits with nanosecond precision and capturing partial ou
 - **Statistical analysis**: confidence intervals, correlation analysis, distribution summaries
 - **Dynamic task generation** across six cognitive domains with five difficulty levels
 - **Google Gemini** support via the Gemini API
+- **Web Interface** — modern browser-based UI for running experiments
 
 ---
 
@@ -41,6 +42,38 @@ echo "LLM_API_KEY=your_google_api_key" >> .env
 # 3. Run a quick test
 python run_pipeline.py --quick-test
 ```
+
+---
+
+## Web Interface
+
+A modern web interface is included for running experiments through your browser:
+
+```bash
+# Start the web server
+python app.py
+```
+
+Then open **http://localhost:5001** in your browser.
+
+### Features:
+- **Experiment Configuration** — Set task count, time limits, categories, and pressure ratio
+- **Real-time Progress** — Live progress bar and status updates
+- **Live Logs** — Scrollable log panel showing experiment progress
+- **Results Table** — Detailed results with quality scores and status badges
+- **Export** — Download results as JSON or CSV
+
+### API Endpoints:
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/` | GET | Main web interface |
+| `/api/config` | GET | Get default configuration |
+| `/api/start` | POST | Start new experiment |
+| `/api/status` | GET | Get experiment status |
+| `/api/stop` | POST | Stop running experiment |
+| `/api/results` | GET | Get experiment results |
+| `/api/logs` | GET | Get experiment logs |
 
 ---
 
@@ -206,6 +239,7 @@ task_id,task_type,time_limit,response_status,response_time,completion_rate,quali
 ```
 time-constrained-llm/
 ├── run_pipeline.py        # Entry point and experiment orchestration
+├── app.py                 # Flask web server and API
 ├── tasks.py               # Task definitions and prompt generation
 ├── config.py              # Configuration management
 ├── .env                   # API keys and environment settings
@@ -218,6 +252,11 @@ time-constrained-llm/
 ├── prompts/
 │   ├── normal.txt         # Standard prompt templates
 │   └── time_pressure.txt  # Urgency-enhanced prompt templates
+├── templates/
+│   └── index.html         # Web interface HTML
+├── static/
+│   ├── styles.css         # Web interface styling
+│   └── app.js             # Web interface JavaScript
 └── outputs/
     ├── responses.json
     ├── metrics.csv
