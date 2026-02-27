@@ -246,15 +246,20 @@ class ExperimentApp {
 
     async loadResults() {
         try {
+            console.log('Loading results...');
             const response = await fetch('/api/results');
             const data = await response.json();
+            console.log('Results data:', data);
             
             if (data.results && data.results.length > 0) {
                 this.displayResults(data.results, data.statistics);
                 document.getElementById('exportJsonBtn').disabled = false;
                 document.getElementById('exportCsvBtn').disabled = false;
+            } else {
+                console.log('No results found or results empty');
             }
         } catch (error) {
+            console.error('Error loading results:', error);
             this.addLog('error', `Error loading results: ${error.message}`);
         }
     }

@@ -67,6 +67,11 @@ def run_experiment_thread(config_dict):
             timeout=config_dict.get("timeout", 600.0)
         )
         
+        # Force sequential execution to avoid API rate limiting
+        from config import get_config
+        cfg = get_config()
+        cfg.resources.max_concurrent_requests = 1
+        
         with state_lock:
             experiment_state["total_tasks"] = config.task_count
         
@@ -88,13 +93,20 @@ def run_experiment_thread(config_dict):
                     "task_id": eval_result.task_id,
                     "task_type": eval_result.task_type,
                     "time_limit": eval_result.time_limit,
-                    "time_elapsed": eval_result.time_elapsed,
-                    "status": eval_result.status.value if hasattr(eval_result.status, 'value') else str(eval_result.status),
+                    "time_elapsed": eval_result.response.time_elapsed if eval_result.response else None,
+                    "status": eval_result.response.status.value if eval_result.response and hasattr(eval_result.response.status, 'value') else str(eval_result.response.status if eval_result.response else 'unknown'),
                     "metrics": eval_result.metrics,
-                    "output": eval_result.output[:500] if eval_result.output else ""  # Truncate long outputs
+                    "output": eval_result.response.content[:500] if eval_result.response and eval_result.response.content else ""
                 })
             
             experiment_state["results"] = results_list
+            
+            # Calculate average quality score from the quality_scores dict
+            avg_quality = 0
+            if result.statistics and result.statistics.quality_scores:
+                quality_vals = list(result.statistics.quality_scores.values())
+                avg_quality = sum(quality_vals) / len(quality_vals) if quality_vals else 0
+            
             experiment_state["statistics"] = {
                 "total_tasks": result.statistics.total_tasks if result.statistics else 0,
                 "completed_tasks": result.statistics.completed_tasks if result.statistics else 0,
@@ -102,7 +114,7 @@ def run_experiment_thread(config_dict):
                 "error_tasks": result.statistics.error_tasks if result.statistics else 0,
                 "avg_completion_rate": result.statistics.avg_completion_rate if result.statistics else 0,
                 "avg_response_time": result.statistics.avg_response_time if result.statistics else 0,
-                "avg_quality_score": result.statistics.avg_quality_score if result.statistics else 0,
+                "avg_quality_score": avg_quality,
                 "avg_output_length": result.statistics.avg_output_length if result.statistics else 0
             }
         
