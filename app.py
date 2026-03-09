@@ -236,6 +236,49 @@ def get_logs():
     with state_lock:
         return jsonify({"logs": experiment_state["logs"]})
 
+@app.route('/api/test-prompt', methods=['POST'])
+def test_prompt():
+    """Test a custom prompt with time constraint"""
+    try:
+        if not request.is_json:
+            return jsonify({"error": "Request must be JSON"}), 400
+        
+        data = request.get_json()
+        if data is None:
+            return jsonify({"error": "Invalid JSON data"}), 400
+        
+        prompt = data.get("prompt", "").strip()
+        if not prompt:
+            return jsonify({"error": "Prompt cannot be empty"}), 400
+        
+        time_limit = data.get("time_limit", 10.0)
+        if time_limit <= 0:
+            time_limit = 10.0
+        
+        # Import LLM manager
+        from core.llm import get_llm_manager
+        llm_manager = get_llm_manager()
+        
+        # Generate response with time limit
+        response = llm_manager.generate_response(prompt, time_limit)
+        
+        return jsonify({
+            "success": True,
+            "prompt": prompt,
+            "time_limit": time_limit,
+            "response": {
+                "content": response.content,
+                "status": response.status.value if hasattr(response.status, 'value') else str(response.status),
+                "time_elapsed": response.time_elapsed,
+                "token_count": response.token_count,
+                "model": response.model,
+                "finish_reason": response.finish_reason
+            }
+        })
+        
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 if __name__ == '__main__':
     print("=" * 60)
     print("Time Constrained LLM Testing System - Web Interface")

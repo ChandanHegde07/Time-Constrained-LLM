@@ -30,6 +30,10 @@ class ExperimentApp {
         document.getElementById('exportJsonBtn').addEventListener('click', () => this.exportJson());
         document.getElementById('exportCsvBtn').addEventListener('click', () => this.exportCsv());
         
+        // Custom prompt testing buttons
+        document.getElementById('testPromptBtn').addEventListener('click', () => this.testCustomPrompt());
+        document.getElementById('clearPromptBtn').addEventListener('click', () => this.clearPromptTest());
+        
         // Slider value update
         const pressureSlider = document.getElementById('time_pressure_ratio');
         const pressureValue = document.getElementById('pressure_value');
@@ -384,6 +388,83 @@ class ExperimentApp {
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
+    }
+
+    async testCustomPrompt() {
+        const prompt = document.getElementById('customPrompt').value.trim();
+        const timeLimit = parseFloat(document.getElementById('promptTimeLimit').value) || 10;
+        
+        if (!prompt) {
+            this.addLog('error', 'Please enter a prompt to test');
+            return;
+        }
+        
+        const testBtn = document.getElementById('testPromptBtn');
+        testBtn.disabled = true;
+        testBtn.textContent = 'Testing...';
+        
+        this.addLog('info', `Testing prompt with ${timeLimit}s time limit`);
+        
+        try {
+            const response = await fetch('/api/test-prompt', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    prompt: prompt,
+                    time_limit: timeLimit
+                })
+            });
+            
+            const data = await response.json();
+            
+            if (response.ok && data.success) {
+                this.displayPromptResult(data);
+                this.addLog('success', `Prompt test completed in ${data.response.time_elapsed.toFixed(2)}s`);
+            } else {
+                this.addLog('error', data.error || 'Failed to test prompt');
+            }
+        } catch (error) {
+            this.addLog('error', `Error testing prompt: ${error.message}`);
+        } finally {
+            testBtn.disabled = false;
+            testBtn.innerHTML = `<svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <path d="M6 4L16 10L6 16V4Z" fill="currentColor"/>
+            </svg>
+            Test Prompt`;
+        }
+    }
+
+    displayPromptResult(data) {
+        const resultsDiv = document.getElementById('promptTestResults');
+        resultsDiv.style.display = 'block';
+        
+        const response = data.response;
+        
+        // Update status with appropriate class
+        const statusEl = document.getElementById('promptStatus');
+        statusEl.textContent = response.status;
+        statusEl.className = 'status-badge ' + this.getStatusClass(response.status);
+        
+        // Update other metadata
+        document.getElementById('promptTimeElapsed').textContent = response.time_elapsed.toFixed(2) + 's';
+        document.getElementById('promptTokens').textContent = response.token_count;
+        
+        // Update response content
+        const contentEl = document.getElementById('promptResponseContent');
+        if (response.content) {
+            contentEl.textContent = response.content;
+        } else {
+            contentEl.textContent = '(No response content)';
+        }
+    }
+
+    clearPromptTest() {
+        document.getElementById('customPrompt').value = '';
+        document.getElementById('promptTimeLimit').value = '10';
+        document.getElementById('promptTestResults').style.display = 'none';
+        this.addLog('info', 'Prompt test cleared');
     }
 }
 

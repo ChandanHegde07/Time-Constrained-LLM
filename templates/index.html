@@ -211,6 +211,55 @@
                 </div>
             </section>
 
+            <!-- Custom Prompt Testing Section -->
+            <section class="prompt-test-panel">
+                <h2>Test Custom Prompt</h2>
+                <p class="section-description">Enter your own prompt to test LLM response with a time constraint</p>
+                
+                <div class="prompt-test-form">
+                    <div class="form-group full-width">
+                        <label for="customPrompt">Your Prompt</label>
+                        <textarea id="customPrompt" name="customPrompt" rows="4" placeholder="Enter your prompt here..."></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="promptTimeLimit">Time Limit (seconds)</label>
+                        <input type="number" id="promptTimeLimit" name="promptTimeLimit" value="10" min="1" max="120" step="1">
+                    </div>
+                    
+                    <div class="button-group">
+                        <button type="button" id="testPromptBtn" class="btn btn-primary">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                <path d="M6 4L16 10L6 16V4Z" fill="currentColor"/>
+                            </svg>
+                            Test Prompt
+                        </button>
+                        <button type="button" id="clearPromptBtn" class="btn btn-secondary">
+                            Clear
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Prompt Test Results -->
+                <div class="prompt-test-results" id="promptTestResults" style="display: none;">
+                    <h3>Response</h3>
+                    <div class="result-meta">
+                        <span class="meta-item">
+                            <strong>Status:</strong> <span id="promptStatus">-</span>
+                        </span>
+                        <span class="meta-item">
+                            <strong>Time Elapsed:</strong> <span id="promptTimeElapsed">-</span>
+                        </span>
+                        <span class="meta-item">
+                            <strong>Tokens:</strong> <span id="promptTokens">-</span>
+                        </span>
+                    </div>
+                    <div class="response-content" id="promptResponseContent">
+                        <!-- Response content will appear here -->
+                    </div>
+                </div>
+            </section>
+
             <!-- Results Panel -->
             <section class="results-panel" id="resultsPanel">
                 <div class="results-header">

@@ -1,0 +1,347 @@
+[
+  {
+    "task_id": 1,
+    "task_type": "summarization",
+    "time_limit": 10.0,
+    "response": {
+      "content": "Here's a quick 45-second summary of the provided text:\n\n\"Photosynthesis is how plants, algae, and some bacteria turn sunlight, carbon dioxide, and water into sugar for energy and oxygen. This is super important for us because it gives us the air we breathe and forms the base of almost all food webs on Earth. Pretty neat, right?\"",
+      "status": "completed",
+      "time_elapsed": 1.6919269561767578,
+      "token_count": 330,
+      "model": "gemini-2.5-flash-lite",
+      "temperature": 0.7,
+      "finish_reason": null,
+      "partial_reason": null
+    },
+    "metrics": {
+      "completion_rate": 1.0,
+      "time_to_cutoff": 1.6919269561767578,
+      "output_length": 330,
+      "quality_score": 77.5
+    },
+    "timestamp": 1773054504.035284,
+    "metadata": {}
+  },
+  {
+    "task_id": 2,
+    "task_type": "qa",
+    "time_limit": 3.0,
+    "response": {
+      "content": "5",
+      "status": "completed",
+      "time_elapsed": 0.8832700252532959,
+      "token_count": 1,
+      "model": "gemini-2.5-flash-lite",
+      "temperature": 0.7,
+      "finish_reason": null,
+      "partial_reason": null
+    },
+    "metrics": {
+      "completion_rate": 1.0,
+      "time_to_cutoff": 0.8832700252532959,
+      "output_length": 1,
+      "quality_score": 67.5
+    },
+    "timestamp": 1773054504.919225,
+    "metadata": {}
+  },
+  {
+    "task_id": 3,
+    "task_type": "reasoning",
+    "time_limit": 30.0,
+    "response": {
+      "content": "The key issue is **product durability/quality**.",
+      "status": "completed",
+      "time_elapsed": 0.8656487464904785,
+      "token_count": 48,
+      "model": "gemini-2.5-flash-lite",
+      "temperature": 0.7,
+      "finish_reason": null,
+      "partial_reason": null
+    },
+    "metrics": {
+      "completion_rate": 1.0,
+      "time_to_cutoff": 0.8656487464904785,
+      "output_length": 48,
+      "quality_score": 77.5
+    },
+    "timestamp": 1773054505.785634,
+    "metadata": {}
+  },
+  {
+    "task_id": 4,
+    "task_type": "analytical",
+    "time_limit": 30.0,
+    "response": {
+      "content": "Let's break down this sales data and extract some meaningful insights.\n\n**Raw Data:**\n\n*   **January:** $45,000\n*   **February:** $52,000\n*   **March:** $48,000\n*   **April:** $61,000\n\n**Calculations and Observations:**\n\n1.  **Total Sales:** $45,000 + $52,000 + $48,000 + $61,000 = **$206,000**\n2.  **Average Monthly Sales:** $206,000 / 4 months = **$51,500**\n3.  **Month-over-Month Changes:**\n    *   **January to February:** $52,000 - $45,000 = **+$7,000** (Increase of approximately 15.6%)\n    *   **February to March:** $48,000 - $52,000 = **-$4,000** (Decrease of approximately 7.7%)\n    *   **March to April:** $61,000 - $48,000 = **+$13,000** (Increase of approximately 27.1%)\n4.  **Highest Sales Month:** **April** ($61,000)\n5.  **Lowest Sales Month:** **January** ($45,000)\n6.  **Overall Trend:** Despite a dip in March, the overall trend from January to April is upward.\n\n**Insights and Analysis:**\n\n*   **Positive Growth Trajectory:** The sales data shows a generally positive trend over the four months. After a strong start in January, there was a healthy increase in February. While March saw a slight dip, April experienced a significant surge, reaching the highest sales figure of the period.\n*   **Seasonal or Event-Driven Peaks:** The substantial increase in April ($13,000 or 27.1% from March) is a key point. This suggests a potential seasonal factor (e.g., spring sales, tax season related spending) or the impact of a specific marketing campaign, product launch, or event",
+      "status": "completed",
+      "time_elapsed": 3.2348551750183105,
+      "token_count": 1493,
+      "model": "gemini-2.5-flash-lite",
+      "temperature": 0.7,
+      "finish_reason": null,
+      "partial_reason": null
+    },
+    "metrics": {
+      "completion_rate": 1.0,
+      "time_to_cutoff": 3.2348551750183105,
+      "output_length": 1493,
+      "quality_score": 77.5
+    },
+    "timestamp": 1773054509.0214899,
+    "metadata": {}
+  },
+  {
+    "task_id": 5,
+    "task_type": "qa",
+    "time_limit": 30.0,
+    "response": {
+      "content": "5",
+      "status": "completed",
+      "time_elapsed": 0.8561108112335205,
+      "token_count": 1,
+      "model": "gemini-2.5-flash-lite",
+      "temperature": 0.7,
+      "finish_reason": null,
+      "partial_reason": null
+    },
+    "metrics": {
+      "completion_rate": 1.0,
+      "time_to_cutoff": 0.8561108112335205,
+      "output_length": 1,
+      "quality_score": 67.5
+    },
+    "timestamp": 1773054509.8783832,
+    "metadata": {}
+  },
+  {
+    "task_id": 6,
+    "task_type": "coding",
+    "time_limit": 15.0,
+    "response": {
+      "content": "```python\ndef add(x, y):\n  \"\"\"Adds two numbers together.\"\"\"\n  return x + y\n\ndef subtract(x, y):\n  \"\"\"Subtracts the second number from the first.\"\"\"\n  return x - y\n\ndef multiply(x, y):\n  \"\"\"Multiplies two numbers together.\"\"\"\n  return x * y\n\ndef divide(x, y):\n  \"\"\"Divides the first number by the second.\n  Handles division by zero.\"\"\"\n  if y == 0:\n    return \"Error: Division by zero is not allowed.\"\n  return x / y\n\ndef calculator():\n  \"\"\"Runs a simple calculator program.\"\"\"\n  print(\"Simple Calculator\")\n  print(\"-----------------\")\n\n  while True:\n    try:\n      num1 = float(input(\"Enter the first number: \"))\n      num2 = float(input(\"Enter the second number: \"))\n    except ValueError:\n      print(\"Invalid input. Please enter numbers only.\")\n      continue\n\n    print(\"\\nSelect operation:\")\n    print(\"1. Add (+)\")\n    print(\"2. Subtract (-)\")\n    print(\"3. Multiply (*)\")\n    print(\"4. Divide (/)\")\n    print(\"5. Exit\")\n\n    choice = input(\"Enter choice (1/2/3/4/5): \")\n\n    if choice == '1':\n      print(f\"{num1} + {num2} = {add(num1, num2)}\")\n    elif choice == '2':\n      print(f\"{num1} - {num2} = {subtract(num1, num2)}\")\n    elif choice == '3':\n      print(f\"{num1} * {num2} = {multiply(num1, num2)}\")\n    elif choice == '4':\n      result = divide(num1, num2)\n      print(f\"{num1} / {num2} = {result}\")\n    elif choice == '5':\n      print(\"Exiting calculator. Goodbye!\")\n      break\n    else:\n      print(\"Invalid choice. Please enter a number between 1 and 5.\")\n\n    print(\"-\" * 20) # Separator for clarity\n\n# Run the calculator\nif __name__ == \"__main__\":\n  calculator()\n```\n\n**",
+      "status": "completed",
+      "time_elapsed": 3.2391209602355957,
+      "token_count": 1591,
+      "model": "gemini-2.5-flash-lite",
+      "temperature": 0.7,
+      "finish_reason": null,
+      "partial_reason": null
+    },
+    "metrics": {
+      "completion_rate": 1.0,
+      "time_to_cutoff": 3.2391209602355957,
+      "output_length": 1591,
+      "quality_score": 77.5
+    },
+    "timestamp": 1773054513.118124,
+    "metadata": {}
+  },
+  {
+    "task_id": 7,
+    "task_type": "analytical",
+    "time_limit": 10.0,
+    "response": {
+      "content": "The trend is **upward overall, but with a dip in Q3**.\n\n*   Q1 to Q2: Significant increase ($100k to $150k).\n*   Q2 to Q3: Decrease ($150k to $120k).",
+      "status": "completed",
+      "time_elapsed": 0.6549100875854492,
+      "token_count": 149,
+      "model": "gemini-2.5-flash-lite",
+      "temperature": 0.7,
+      "finish_reason": null,
+      "partial_reason": null
+    },
+    "metrics": {
+      "completion_rate": 1.0,
+      "time_to_cutoff": 0.6549100875854492,
+      "output_length": 149,
+      "quality_score": 77.5
+    },
+    "timestamp": 1773054513.7737951,
+    "metadata": {}
+  },
+  {
+    "task_id": 8,
+    "task_type": "decision_making",
+    "time_limit": 3.0,
+    "response": {
+      "content": "",
+      "status": "timed_out",
+      "time_elapsed": 60.0,
+      "token_count": 0,
+      "model": "gemini-2.5-flash-lite",
+      "temperature": 0.7,
+      "finish_reason": "timeout",
+      "partial_reason": "generation_time_exceeded"
+    },
+    "metrics": {
+      "completion_rate": 0.0,
+      "time_to_cutoff": 60.0,
+      "output_length": 0,
+      "quality_score": 22.499999999999996
+    },
+    "timestamp": 1773054516.7782028,
+    "metadata": {}
+  },
+  {
+    "task_id": 9,
+    "task_type": "reasoning",
+    "time_limit": 5.0,
+    "response": {
+      "content": "This product review expresses **mixed sentiment**.\n\nHere's a breakdown:\n\n*   **Positive Aspect:** \"The product works well\" is a clear positive statement about the product's functionality.\n*   **Negative Aspect:** \"but the battery life is disappointing\" is a clear negative statement about a specific feature.\n\nTherefore, the overall sentiment is **neutral to slightly negative**, as the positive aspect is qualified by a significant drawback.",
+      "status": "completed",
+      "time_elapsed": 1.4314937591552734,
+      "token_count": 442,
+      "model": "gemini-2.5-flash-lite",
+      "temperature": 0.7,
+      "finish_reason": null,
+      "partial_reason": null
+    },
+    "metrics": {
+      "completion_rate": 1.0,
+      "time_to_cutoff": 1.4314937591552734,
+      "output_length": 442,
+      "quality_score": 77.5
+    },
+    "timestamp": 1773054518.210801,
+    "metadata": {}
+  },
+  {
+    "task_id": 10,
+    "task_type": "creative",
+    "time_limit": 30.0,
+    "response": {
+      "content": "A silver sheen on emerald blades,\nWhere night's soft breath serenely fades.\nEach blade a jewel, a tiny sphere,\nReflecting dawn, so crystal clear.\n\nThe sun ascends, a golden eye,\nAnd paints the world across the sky.\nBut still they cling, these drops so bright,\nA transient, shimmering delight.\n\nThey kiss the grass with gentle grace,\nA whispered blessing on its face.\nEach tiny pearl, a world untold,\nOf morning's magic, pure and bold.\n\nThey catch the light, a thousand gleams,\nLike scattered stars in waking dreams.\nA subtle shimmer, soft and low,\nWhere silent, verdant wonders grow.\n\nThey cool the earth, a tender tear,\nWashing away the lingering fear\nOf darkness past, of shadows deep,\nWhile nature stirs from slumbering sleep.\n\nAnd though they vanish with the day,\nTheir fleeting beauty will not stray\nFrom memory's heart, a gentle sign,\nOf morning's artistry, divine.",
+      "status": "completed",
+      "time_elapsed": 1.1941959857940674,
+      "token_count": 871,
+      "model": "gemini-2.5-flash-lite",
+      "temperature": 0.7,
+      "finish_reason": null,
+      "partial_reason": null
+    },
+    "metrics": {
+      "completion_rate": 1.0,
+      "time_to_cutoff": 1.1941959857940674,
+      "output_length": 871,
+      "quality_score": 77.5
+    },
+    "timestamp": 1773054519.406083,
+    "metadata": {}
+  },
+  {
+    "task_id": 1,
+    "task_type": "creative",
+    "time_limit": 10.0,
+    "response": {
+      "content": "```python\ndef calculate_factorial(number):\n  \"\"\"\n  Calculates the factorial of a non-negative integer.\n\n  Args:\n    number: A non-negative integer.\n\n  Returns:\n    The factorial of the number.\n\n  Raises:\n    ValueError: If the input number is negative.\n  \"\"\"\n  if not isinstance(number, int) or number < 0:\n    raise ValueError(\"Factorial is defined only for non-negative integers.\")\n  \n  if number == 0:\n    return 1\n  else:\n    factorial = 1\n    for i in range(1, number + 1):\n      factorial *= i\n    return factorial\n\n# Example usage:\nnum = 5\ntry:\n  result = calculate_factorial(num)\n  print(f\"The factorial of {num} is {result}\")  # Output: The factorial of 5 is 120\nexcept ValueError as e:\n  print(f\"Error: {e}\")\n\nnum = 0\ntry:\n  result = calculate_factorial(num)\n  print(f\"The factorial of {num} is {result}\")  # Output: The factorial of 0 is 1\nexcept ValueError as e:\n  print(f\"Error: {e}\")\n\nnum = -3\ntry:\n  result = calculate_factorial(num)\n  print(f\"The factorial of {num} is {result}\")\nexcept ValueError as e:\n  print(f\"Error: {e}\")  # Output: Error: Factorial is defined only for non-negative integers.\n\nnum = 3.5\ntry:\n  result = calculate_factorial(num)\n  print(f\"The factorial of {num} is {result}\")\nexcept ValueError as e:\n  print(f\"Error: {e}\")  # Output: Error: Factorial is defined only for non-negative integers.\n```\n\n**Explanation:**\n\n1. **Function Definition:**\n   - `def calculate_factorial(number):` defines a function named `calculate_factorial` that takes one argument, `number`.\n\n2. **Input Validation:**\n   - `if not isinstance(number, int) or number < 0:`: This line checks for invalid input.\n     - `",
+      "status": "completed",
+      "time_elapsed": 2.535162925720215,
+      "token_count": 1628,
+      "model": "gemini-2.5-flash-lite",
+      "temperature": 0.7,
+      "finish_reason": null,
+      "partial_reason": null
+    },
+    "metrics": {
+      "completion_rate": 1.0,
+      "time_to_cutoff": 2.535162925720215,
+      "output_length": 1628,
+      "quality_score": 77.5
+    },
+    "timestamp": 1773054711.931883,
+    "metadata": {}
+  },
+  {
+    "task_id": 2,
+    "task_type": "summarization",
+    "time_limit": 5.0,
+    "response": {
+      "content": "The Industrial Revolution, starting in late 18th-century Britain, was a time of huge change. It revolutionized how things were made, how we traveled, and how we communicated. This led to factories popping up, cities growing, and the emergence of new social groups.",
+      "status": "completed",
+      "time_elapsed": 0.9623661041259766,
+      "token_count": 264,
+      "model": "gemini-2.5-flash-lite",
+      "temperature": 0.7,
+      "finish_reason": null,
+      "partial_reason": null
+    },
+    "metrics": {
+      "completion_rate": 1.0,
+      "time_to_cutoff": 0.9623661041259766,
+      "output_length": 264,
+      "quality_score": 77.5
+    },
+    "timestamp": 1773054712.894819,
+    "metadata": {}
+  },
+  {
+    "task_id": 3,
+    "task_type": "summarization",
+    "time_limit": 3.0,
+    "response": {
+      "content": "Here's a 45-second quick summary:\n\n\"Photosynthesis is how plants, algae, and some bacteria make their own food. They take sunlight, carbon dioxide from the air, and water, and turn it into sugar for energy, releasing oxygen as a byproduct. This is super important because that oxygen is what we breathe, and the sugar is the start of almost every food chain on Earth.\"",
+      "status": "completed",
+      "time_elapsed": 1.378141164779663,
+      "token_count": 368,
+      "model": "gemini-2.5-flash-lite",
+      "temperature": 0.7,
+      "finish_reason": null,
+      "partial_reason": null
+    },
+    "metrics": {
+      "completion_rate": 1.0,
+      "time_to_cutoff": 1.378141164779663,
+      "output_length": 368,
+      "quality_score": 77.5
+    },
+    "timestamp": 1773054714.273618,
+    "metadata": {}
+  },
+  {
+    "task_id": 4,
+    "task_type": "reasoning",
+    "time_limit": 3.0,
+    "response": {
+      "content": "The key issue is **product quality/durability**.",
+      "status": "completed",
+      "time_elapsed": 0.9002261161804199,
+      "token_count": 48,
+      "model": "gemini-2.5-flash-lite",
+      "temperature": 0.7,
+      "finish_reason": null,
+      "partial_reason": null
+    },
+    "metrics": {
+      "completion_rate": 1.0,
+      "time_to_cutoff": 0.9002261161804199,
+      "output_length": 48,
+      "quality_score": 77.5
+    },
+    "timestamp": 1773054715.174502,
+    "metadata": {}
+  },
+  {
+    "task_id": 5,
+    "task_type": "analytical",
+    "time_limit": 5.0,
+    "response": {
+      "content": "Error: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}",
+      "status": "error",
+      "time_elapsed": 0.0,
+      "token_count": 0,
+      "model": "gemini-2.5-flash-lite",
+      "temperature": 0.7,
+      "finish_reason": "error",
+      "partial_reason": "503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}"
+    },
+    "metrics": {
+      "completion_rate": 0.0,
+      "time_to_cutoff": 0.0,
+      "output_length": 201,
+      "quality_score": 0.0
+    },
+    "timestamp": 1773054718.671624,
+    "metadata": {}
+  }
+]
