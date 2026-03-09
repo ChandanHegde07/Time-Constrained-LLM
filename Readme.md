@@ -62,6 +62,7 @@ Then open **http://localhost:5001** in your browser.
 - **Live Logs** — Scrollable log panel showing experiment progress
 - **Results Table** — Detailed results with quality scores and status badges
 - **Export** — Download results as JSON or CSV
+- **Custom Prompt Testing** — Test your own prompts with time constraints
 
 ### API Endpoints:
 
@@ -74,6 +75,49 @@ Then open **http://localhost:5001** in your browser.
 | `/api/stop` | POST | Stop running experiment |
 | `/api/results` | GET | Get experiment results |
 | `/api/logs` | GET | Get experiment logs |
+| `/api/test-prompt` | POST | Test custom prompt with time limit |
+
+---
+
+## Custom Prompt Testing
+
+You can test your own prompts directly in the web interface:
+
+1. Open **http://localhost:5001** in your browser
+2. Scroll down to the "Test Custom Prompt" section
+3. Enter your prompt in the text area
+4. Set a time limit (in seconds)
+5. Click "Test Prompt"
+
+The response will display:
+- **Status** — completed, timed_out, or error
+- **Time Elapsed** — actual time taken
+- **Token Count** — number of tokens generated
+- **Response Content** — the LLM's response
+
+### Using the API directly:
+
+```bash
+curl -X POST http://localhost:5001/api/test-prompt \
+  -H "Content-Type: application/json" \
+  -d '{"prompt": "Explain quantum computing in simple terms", "time_limit": 10}'
+```
+
+Response:
+```json
+{
+  "success": true,
+  "prompt": "Explain quantum computing in simple terms",
+  "time_limit": 10,
+  "response": {
+    "content": "Quantum computing uses...",
+    "status": "completed",
+    "time_elapsed": 3.45,
+    "token_count": 128,
+    "model": "gemini-1.5-flash"
+  }
+}
+```
 
 ---
 
