@@ -1,6 +1,6 @@
 # Time-Constrained LLM
 
-A research platform for studying how large language models behave under strict time constraints — measuring response quality, completion rates, and output degradation when generation is forcibly cut short.
+> A research platform for studying how large language models behave under strict time constraints — measuring response quality, completion rates, and output degradation when generation is forcibly cut short.
 
 ---
 
@@ -9,8 +9,6 @@ A research platform for studying how large language models behave under strict t
 Most LLM benchmarks evaluate quality in ideal conditions. This system asks a different question: **what happens when a model runs out of time?**
 
 By enforcing hard time limits with nanosecond precision and capturing partial outputs, this platform lets you study how response quality degrades under pressure, compare behavior across task types and difficulty levels, and analyze the tradeoff between time budgets and output completeness.
-
----
 
 ## Features
 
@@ -28,18 +26,20 @@ By enforcing hard time limits with nanosecond precision and capturing partial ou
 
 ## Quick Start
 
-**Prerequisites:** Python 3.8+, a Google API key
+**Prerequisites:** Python 3.8+ and a Google API key.
 
 ```bash
-# 1. Clone and install
-git clone https://github.com/yourusername/time-constrained-llm.git
+# 1. Clone the repository
+git clone https://github.com/ChandanHegde07/Time-Constrained-LLM.git
 cd time-constrained-llm
+
+# 2. Install dependencies
 pip install -r requirements.txt
 
-# 2. Configure your API key
+# 3. Configure your API key
 echo "LLM_API_KEY=your_google_api_key" >> .env
 
-# 3. Run a quick test
+# 4. Run a quick test
 python run_pipeline.py --quick-test
 ```
 
@@ -47,7 +47,7 @@ python run_pipeline.py --quick-test
 
 ## Web Interface
 
-A modern web interface is included for running experiments through your browser:
+A modern web interface is included for running experiments directly through your browser.
 
 ```bash
 # Start the web server
@@ -56,15 +56,15 @@ python app.py
 
 Then open **http://localhost:5001** in your browser.
 
-### Features:
-- **Experiment Configuration** — Set task count, time limits, categories, and pressure ratio
-- **Real-time Progress** — Live progress bar and status updates
-- **Live Logs** — Scrollable log panel showing experiment progress
-- **Results Table** — Detailed results with quality scores and status badges
-- **Export** — Download results as JSON or CSV
-- **Custom Prompt Testing** — Test your own prompts with time constraints
+### Features
+- **Experiment Configuration** — Set task count, time limits, categories, and pressure ratio.
+- **Real-time Progress** — Live progress bar and status updates.
+- **Live Logs** — Scrollable log panel showing experiment progress.
+- **Results Table** — Detailed results with quality scores and status badges.
+- **Export** — Download results as JSON or CSV.
+- **Custom Prompt Testing** — Test your own prompts with time constraints.
 
-### API Endpoints:
+### API Endpoints
 
 | Endpoint | Method | Description |
 |----------|--------|-------------|
@@ -81,21 +81,17 @@ Then open **http://localhost:5001** in your browser.
 
 ## Custom Prompt Testing
 
-You can test your own prompts directly in the web interface:
+You can easily test your own prompts directly via the web interface:
 
-1. Open **http://localhost:5001** in your browser
-2. Scroll down to the "Test Custom Prompt" section
+1. Open **http://localhost:5001**
+2. Navigate to the "Test Custom Prompt" section
 3. Enter your prompt in the text area
 4. Set a time limit (in seconds)
 5. Click "Test Prompt"
 
-The response will display:
-- **Status** — completed, timed_out, or error
-- **Time Elapsed** — actual time taken
-- **Token Count** — number of tokens generated
-- **Response Content** — the LLM's response
+The response will display **Status** (`completed`, `timed_out`, or `error`), **Time Elapsed**, **Token Count**, and the **Response Content**.
 
-### Using the API directly:
+### Direct API Testing
 
 ```bash
 curl -X POST http://localhost:5001/api/test-prompt \
@@ -103,7 +99,7 @@ curl -X POST http://localhost:5001/api/test-prompt \
   -d '{"prompt": "Explain quantum computing in simple terms", "time_limit": 10}'
 ```
 
-Response:
+**Example Response:**
 ```json
 {
   "success": true,
@@ -123,10 +119,10 @@ Response:
 
 ## Usage
 
-### Command Line
+### Command Line Interface
 
+Run a basic experiment from the terminal:
 ```bash
-# Basic experiment
 python run_pipeline.py \
   --name my_experiment \
   --tasks 50 \
@@ -138,6 +134,7 @@ python run_pipeline.py \
 
 ### Python API
 
+Integrate the pipeline directly into your scripts:
 ```python
 from run_pipeline import get_pipeline_controller
 
@@ -158,6 +155,7 @@ print(f"Avg completion rate: {result.statistics.avg_completion_rate:.1%}")
 
 ### Advanced Usage
 
+Directly interface with the LLM Manager and Task Manager for custom generation workflows:
 ```python
 from config import get_config
 from core.llm import get_llm_manager
@@ -187,14 +185,16 @@ print(f"Content: {response.content}")
 
 ## Example Experiments
 
-**Time pressure effects** — compare quality across increasing time budgets:
+**Time Pressure Effects**  
+Compare quality across increasing time budgets:
 ```bash
 python run_pipeline.py --name time_pressure_analysis \
   --tasks 100 --time-limits 2 5 10 20 \
   --categories reasoning creative qa --difficulty 2 3 4 --pressure-ratio 0.5
 ```
 
-**Task type sensitivity** — find which domains degrade fastest under pressure:
+**Task Type Sensitivity**  
+Find which domains degrade fastest under pressure:
 ```bash
 python run_pipeline.py --name task_sensitivity \
   --tasks 150 --time-limits 3 6 9 \
@@ -202,7 +202,8 @@ python run_pipeline.py --name task_sensitivity \
   --difficulty 2 3 4 5 --pressure-ratio 0.6
 ```
 
-**Provider comparison** — benchmark different models side by side:
+**Provider Comparison**  
+Benchmark different models side by side:
 ```bash
 python run_pipeline.py --name provider_comparison \
   --tasks 50 --time-limits 5 \
@@ -225,7 +226,6 @@ python run_pipeline.py --name provider_comparison \
 | `partial_completion` | Boolean flag for partially completed outputs |
 
 ### Accessing Analysis
-
 ```python
 from core.evaluator import get_evaluator
 
@@ -248,7 +248,7 @@ print(f"Mean: {ci['mean']:.1f}  95% CI: [{ci['lower']:.1f}, {ci['upper']:.1f}]")
 
 ## Output Formats
 
-Results are written to `outputs/` in both JSON and CSV.
+Results are written to `outputs/` in both JSON and CSV formats.
 
 **`outputs/responses.json`**
 ```json
@@ -270,7 +270,7 @@ Results are written to `outputs/` in both JSON and CSV.
 ```
 
 **`outputs/metrics.csv`**
-```
+```csv
 task_id,task_type,time_limit,response_status,response_time,completion_rate,quality_score,token_count,token_rate
 1,reasoning,5.0,partial,5.00,0.60,55.2,89,17.8
 2,creative,10.0,completed,8.45,1.00,78.9,156,18.5
@@ -297,7 +297,8 @@ time-constrained-llm/
 │   ├── normal.txt         # Standard prompt templates
 │   └── time_pressure.txt  # Urgency-enhanced prompt templates
 ├── templates/
-│   └── index.html         # Web interface HTML
+│   ├── home.html          # Main web interface HTML
+│   └── experiment.html    # Experiment runner interface HTML
 ├── static/
 │   ├── styles.css         # Web interface styling
 │   └── app.js             # Web interface JavaScript
@@ -313,8 +314,7 @@ time-constrained-llm/
 
 All settings can be controlled via `.env` or `config.py`.
 
-**Key `.env` options:**
-
+**Key `.env` Options:**
 ```ini
 # LLM
 LLM_PROVIDER=google
@@ -342,7 +342,7 @@ OUTPUT_DIRECTORY=outputs
 
 ## Architecture
 
-The system uses a multi-threaded execution model:
+The system uses a multi-threaded execution model for precise concurrency control:
 
 ```
 Pipeline Controller
@@ -355,20 +355,18 @@ Pipeline Controller
  Evaluator → outputs/
 ```
 
-Notable implementation details:
-
-- **Thread-based timeouts** with streaming cancellation for hard cutoffs
-- **Hash-based response caching** to avoid redundant API calls
-- **Exponential backoff** for retries on API failures
-- **Priority queue** for task scheduling with load balancing across LLM workers
-- **12-factor config** with per-environment profiles (dev / test / staging / prod)
+**Implementation Details:**
+- Thread-based timeouts with streaming cancellation for hard cutoffs
+- Hash-based response caching to avoid redundant API calls
+- Exponential backoff for retries on API failures
+- Priority queue for task scheduling with load balancing across LLM workers
+- 12-factor config with per-environment profiles (dev / test / staging / prod)
 
 ---
 
 ## Extending the System
 
-### Add a new LLM provider
-
+### Adding a New LLM Provider
 ```python
 from core.llm import LLMBase, LLMResponse, LLMFactory
 
@@ -378,11 +376,9 @@ class MyLLM(LLMBase):
 
 LLMFactory._instances["my_provider"] = MyLLM
 ```
+*Then set `LLM_PROVIDER=my_provider` in your `.env` file.*
 
-Then set `LLM_PROVIDER=my_provider` in `.env`.
-
-### Add a custom metric
-
+### Adding a Custom Metric
 ```python
 from core.evaluator import MetricCalculator
 
@@ -393,8 +389,7 @@ class MyMetricCalculator(MetricCalculator):
         return metrics
 ```
 
-### Add a task category
-
+### Adding a Task Category
 ```python
 from tasks import TaskCategory, TaskDefinition
 from dataclasses import dataclass
@@ -409,13 +404,11 @@ class MyTask(TaskDefinition):
 
 ## Troubleshooting
 
-**API errors** — verify `LLM_API_KEY` in `.env` and check your provider's status page.
+- **API Errors** — Verify `LLM_API_KEY` in `.env` and check your provider's status page.
+- **Timeouts** — Lower `LLM_TIMEOUT` or increase `TIME_LIMITS` if responses are being cut off too aggressively.
+- **Memory Issues** — Reduce `MAX_CONCURRENT_REQUESTS` or lower `LLM_MAX_TOKENS`.
 
-**Timeouts** — lower `LLM_TIMEOUT` or increase `TIME_LIMITS` if responses are being cut off too aggressively.
-
-**Memory issues** — reduce `MAX_CONCURRENT_REQUESTS` or lower `LLM_MAX_TOKENS`.
-
-**Debug mode:**
+**Debug Mode:**
 ```bash
 python run_pipeline.py --quick-test --log-level DEBUG
 tail -f outputs/logs.txt
@@ -424,6 +417,8 @@ tail -f outputs/logs.txt
 ---
 
 ## Contributing
+
+We welcome contributions! Please follow the steps below to set up your dev environment:
 
 ```bash
 pip install -e .[dev]
