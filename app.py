@@ -130,9 +130,14 @@ def run_experiment_thread(config_dict):
         log_message(f"Error: {str(e)}")
 
 @app.route('/')
-def index():
-    """Serve the main HTML page"""
-    return render_template('index.html')
+def home():
+    """Serve the home page"""
+    return render_template('home.html')
+
+@app.route('/experiment')
+def experiment():
+    """Serve the experiment page"""
+    return render_template('experiment.html')
 
 @app.route('/api/config', methods=['GET'])
 def get_default_config():
