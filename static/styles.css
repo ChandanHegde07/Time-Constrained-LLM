@@ -14,7 +14,7 @@
     --bg-primary: #0f172a;
     --bg-secondary: #1e293b;
     --bg-tertiary: #334155;
-    --bg-input: #0f172a;
+    --bg-input: rgba(15, 23, 42, 0.75);
     
     /* Border Colors */
     --border-color: #334155;
@@ -82,6 +82,13 @@
     --transition: 0.2s ease;
     --transition-smooth: cubic-bezier(0.4, 0, 0.2, 1);
     --transition-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+    /* Surfaces & glow */
+    --surface-card: rgba(15, 23, 42, 0.85);
+    --surface-panel: rgba(15, 23, 42, 0.75);
+    --surface-border: rgba(255, 255, 255, 0.08);
+    --surface-glow: rgba(59, 130, 246, 0.2);
+    --shadow-panel: 0 25px 60px rgba(15, 23, 42, 0.55);
 }
 
 /* ============================================
@@ -106,25 +113,54 @@ body {
     font-size: 14px;
     line-height: 1.6;
     color: var(--text-primary);
-    background-color: var(--bg-primary);
+    background-color: #020617;
+    background-image:
+        radial-gradient(circle at 20% 20%, rgba(59, 130, 246, 0.25), transparent 45%),
+        radial-gradient(circle at 80% 10%, rgba(14, 165, 233, 0.15), transparent 40%),
+        radial-gradient(circle at 50% 80%, rgba(14, 165, 233, 0.12), transparent 55%);
+    background-attachment: fixed;
     min-height: 100vh;
     overflow-x: hidden;
+    position: relative;
+}
+
+body::before,
+body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+}
+
+body::before {
+    background: linear-gradient(180deg, rgba(15, 23, 42, 0.95), rgba(15, 23, 42, 0.8));
+    mix-blend-mode: screen;
+    opacity: 0.85;
+}
+
+body::after {
+    background: radial-gradient(circle at 50% 10%, rgba(59, 130, 246, 0.18), transparent 45%);
+    filter: blur(120px);
+    opacity: 0.6;
 }
 
 /* ============================================
    Layout
    ============================================ */
 .container {
-    max-width: 1400px;
+    max-width: min(1400px, 96vw);
     margin: 0 auto;
-    padding: 0 var(--space-lg);
+    padding: clamp(var(--space-md), 2vw, var(--space-lg)) clamp(var(--space-md), 3vw, var(--space-xl));
+    position: relative;
+    z-index: 1;
 }
 
 .main-content {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--space-lg);
-    margin-bottom: var(--space-lg);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(var(--space-md), 3vw, var(--space-xl));
+    margin-bottom: clamp(var(--space-lg), 3vw, var(--space-3xl));
 }
 
 /* ============================================
@@ -188,13 +224,14 @@ body {
    Panels
    ============================================ */
 .panel {
-    background: var(--bg-secondary);
-    border: 1px solid var(--border-color);
+    background: var(--surface-card);
+    border: 1px solid var(--surface-border);
     border-radius: var(--radius-xl);
     padding: var(--space-lg);
     transition: all var(--transition-smooth);
     position: relative;
     overflow: hidden;
+    box-shadow: var(--shadow-panel), 0 6px 20px rgba(15, 23, 42, 0.35);
 }
 
 .panel::before {
@@ -210,6 +247,15 @@ body {
     transform-origin: left;
 }
 
+.panel::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(59, 130, 246, 0.05), transparent 70%);
+    opacity: 0;
+    transition: opacity var(--transition-smooth);
+}
+
 .panel:hover {
     border-color: var(--border-light);
     transform: translateY(-4px);
@@ -218,6 +264,24 @@ body {
 
 .panel:hover::before {
     transform: scaleX(1);
+}
+
+.panel:hover::after {
+    opacity: 1;
+}
+
+@supports (backdrop-filter: blur(0px)) {
+    .panel,
+    .stat-card,
+    .logs-container,
+    .results-table-container {
+        background: rgba(15, 23, 42, 0.55);
+        backdrop-filter: blur(20px);
+    }
+
+    .logs-container {
+        border-color: var(--surface-border);
+    }
 }
 
 .panel-title {
@@ -306,7 +370,7 @@ p {
     font-size: 13px;
     color: var(--text-primary);
     background: var(--bg-input);
-    border: 1px solid var(--border-color);
+    border: 1px solid var(--surface-border);
     border-radius: var(--radius-md);
     padding: 12px 14px;
     transition: all var(--transition-smooth);
@@ -326,13 +390,6 @@ p {
 .form-group select:hover,
 .form-group textarea:hover {
     border-color: var(--border-light);
-}
-
-.form-group input:focus,
-.form-group select:focus,
-.form-group textarea:focus {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 3px var(--accent-bg);
 }
 
 .form-group input::placeholder,
@@ -536,10 +593,11 @@ p {
    ============================================ */
 .button-group {
     display: flex;
+    flex-wrap: wrap;
     gap: var(--space-md);
     margin-top: var(--space-lg);
     padding-top: var(--space-lg);
-    border-top: 1px solid var(--border-color);
+    border-top: 1px solid var(--surface-border);
 }
 
 .btn {
@@ -660,10 +718,11 @@ p {
     align-items: center;
     gap: var(--space-md);
     padding: var(--space-md) var(--space-lg);
-    background: var(--bg-input);
-    border: 1px solid var(--border-color);
+    background: rgba(15, 23, 42, 0.85);
+    border: 1px solid var(--surface-border);
     border-radius: var(--radius-lg);
     margin-bottom: var(--space-lg);
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.35);
 }
 
 .status-dot {
@@ -767,20 +826,21 @@ p {
    ============================================ */
 .stats-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
     gap: var(--space-md);
     margin-bottom: var(--space-lg);
 }
 
 .stat-card {
-    background: var(--bg-input);
+    background: var(--surface-card);
     padding: var(--space-lg);
     border-radius: var(--radius-lg);
     text-align: center;
-    border: 1px solid var(--border-color);
+    border: 1px solid var(--surface-border);
     transition: all var(--transition-smooth);
     position: relative;
     overflow: hidden;
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
 }
 
 .stat-card::after {
@@ -858,12 +918,13 @@ p {
     height: 220px;
     overflow-y: auto;
     background: var(--bg-input);
-    border: 1px solid var(--border-color);
+    border: 1px solid var(--surface-border);
     border-radius: var(--radius-lg);
     padding: var(--space-md);
     font-family: var(--font-mono);
     font-size: 12px;
     scroll-behavior: smooth;
+    box-shadow: 0 20px 45px rgba(0, 0, 0, 0.4);
 }
 
 .log-entry {
@@ -943,8 +1004,9 @@ p {
 .results-table-container {
     overflow-x: auto;
     border-radius: var(--radius-lg);
-    border: 1px solid var(--border-color);
-    background: var(--bg-secondary);
+    border: 1px solid var(--surface-border);
+    background: var(--surface-panel);
+    box-shadow: 0 25px 45px rgba(0, 0, 0, 0.35);
 }
 
 .results-table {
