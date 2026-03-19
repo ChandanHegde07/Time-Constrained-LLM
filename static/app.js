@@ -31,8 +31,19 @@ class ExperimentApp {
         document.getElementById('exportCsvBtn').addEventListener('click', () => this.exportCsv());
         
         // Custom prompt testing buttons
-        document.getElementById('testPromptBtn').addEventListener('click', () => this.testCustomPrompt());
-        document.getElementById('clearPromptBtn').addEventListener('click', () => this.clearPromptTest());
+        document.querySelectorAll('.prompt-test-panel').forEach(panel => {
+            const testBtn = panel.querySelector('.test-prompt-btn');
+            const clearBtn = panel.querySelector('.clear-prompt-btn');
+
+            if (testBtn) {
+                testBtn.dataset.originalHtml = testBtn.innerHTML;
+                testBtn.addEventListener('click', () => this.testCustomPrompt(testBtn));
+            }
+
+            if (clearBtn) {
+                clearBtn.addEventListener('click', () => this.clearPromptTest(clearBtn));
+            }
+        });
         
         // Slider value update
         const pressureSlider = document.getElementById('time_pressure_ratio');
@@ -390,18 +401,24 @@ class ExperimentApp {
         URL.revokeObjectURL(url);
     }
 
-    async testCustomPrompt() {
-        const prompt = document.getElementById('customPrompt').value.trim();
-        const timeLimit = parseFloat(document.getElementById('promptTimeLimit').value) || 10;
+    async testCustomPrompt(testButton) {
+        const panel = testButton.closest('.prompt-test-panel');
+        if (!panel) {
+            return;
+        }
+
+        const promptInput = panel.querySelector('.custom-prompt-input');
+        const timeLimitInput = panel.querySelector('.prompt-time-limit-input');
+        const prompt = (promptInput?.value || '').trim();
+        const timeLimit = parseFloat(timeLimitInput?.value) || 10;
         
         if (!prompt) {
             this.addLog('error', 'Please enter a prompt to test');
             return;
         }
-        
-        const testBtn = document.getElementById('testPromptBtn');
-        testBtn.disabled = true;
-        testBtn.textContent = 'Testing...';
+
+        testButton.disabled = true;
+        testButton.textContent = 'Testing...';
         
         this.addLog('info', `Testing prompt with ${timeLimit}s time limit`);
         
@@ -420,50 +437,101 @@ class ExperimentApp {
             const data = await response.json();
             
             if (response.ok && data.success) {
-                this.displayPromptResult(data);
-                this.addLog('success', `Prompt test completed in ${data.response.time_elapsed.toFixed(2)}s`);
+                this.displayPromptResult(panel, data);
+                this.addLog('success', `Prompt test completed in ${data.response?.time_elapsed?.toFixed(2) || '0.00'}s`);
             } else {
                 this.addLog('error', data.error || 'Failed to test prompt');
             }
         } catch (error) {
             this.addLog('error', `Error testing prompt: ${error.message}`);
         } finally {
-            testBtn.disabled = false;
-            testBtn.innerHTML = `<svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                <path d="M6 4L16 10L6 16V4Z" fill="currentColor"/>
-            </svg>
-            Test Prompt`;
+            testButton.disabled = false;
+            const originalHtml = testButton.dataset.originalHtml || '<svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M6 4L16 10L6 16V4Z" fill="currentColor"/></svg>Test Prompt';
+            testButton.innerHTML = originalHtml;
         }
     }
 
-    displayPromptResult(data) {
-        const resultsDiv = document.getElementById('promptTestResults');
+    displayPromptResult(panel, data) {
+        if (!panel) {
+            return;
+        }
+
+        const resultsDiv = panel.querySelector('.prompt-test-results');
+        if (!resultsDiv) {
+            return;
+        }
+
         resultsDiv.style.display = 'block';
-        
-        const response = data.response;
-        
-        // Update status with appropriate class
-        const statusEl = document.getElementById('promptStatus');
-        statusEl.textContent = response.status;
-        statusEl.className = 'status-badge ' + this.getStatusClass(response.status);
-        
-        // Update other metadata
-        document.getElementById('promptTimeElapsed').textContent = response.time_elapsed.toFixed(2) + 's';
-        document.getElementById('promptTokens').textContent = response.token_count;
-        
-        // Update response content
-        const contentEl = document.getElementById('promptResponseContent');
-        if (response.content) {
-            contentEl.textContent = response.content;
-        } else {
-            contentEl.textContent = '(No response content)';
+        const response = data.response || {};
+
+        const statusEl = resultsDiv.querySelector('.prompt-status-value');
+        if (statusEl) {
+            const statusText = response.status || 'Unknown';
+            statusEl.textContent = statusText;
+            statusEl.classList.remove('pending', 'completed', 'timeout', 'error');
+            statusEl.classList.add('status-badge', this.getStatusClass(statusText));
+        }
+
+        const timeEl = resultsDiv.querySelector('.prompt-time-elapsed-value');
+        if (timeEl) {
+            if (typeof response.time_elapsed === 'number') {
+                timeEl.textContent = response.time_elapsed.toFixed(2) + 's';
+            } else {
+                timeEl.textContent = '-';
+            }
+        }
+
+        const tokensEl = resultsDiv.querySelector('.prompt-tokens-value');
+        if (tokensEl) {
+            tokensEl.textContent = response.token_count ?? '-';
+        }
+
+        const contentEl = resultsDiv.querySelector('.prompt-response-content');
+        if (contentEl) {
+            contentEl.textContent = response.content || '(No response content)';
         }
     }
 
-    clearPromptTest() {
-        document.getElementById('customPrompt').value = '';
-        document.getElementById('promptTimeLimit').value = '10';
-        document.getElementById('promptTestResults').style.display = 'none';
+    clearPromptTest(clearButton) {
+        const panel = clearButton.closest('.prompt-test-panel');
+        if (!panel) {
+            return;
+        }
+
+        const promptInput = panel.querySelector('.custom-prompt-input');
+        const timeLimitInput = panel.querySelector('.prompt-time-limit-input');
+
+        if (promptInput) {
+            promptInput.value = '';
+        }
+
+        if (timeLimitInput) {
+            timeLimitInput.value = '10';
+        }
+
+        const resultsDiv = panel.querySelector('.prompt-test-results');
+        if (resultsDiv) {
+            resultsDiv.style.display = 'none';
+            const statusEl = resultsDiv.querySelector('.prompt-status-value');
+            if (statusEl) {
+                statusEl.textContent = '-';
+                statusEl.classList.remove('pending', 'completed', 'timeout', 'error');
+                statusEl.classList.add('status-badge', 'pending');
+            }
+            const timeEl = resultsDiv.querySelector('.prompt-time-elapsed-value');
+            if (timeEl) {
+                timeEl.textContent = '-';
+            }
+            const tokensEl = resultsDiv.querySelector('.prompt-tokens-value');
+            if (tokensEl) {
+                tokensEl.textContent = '-';
+            }
+            const contentEl = resultsDiv.querySelector('.prompt-response-content');
+            if (contentEl) {
+                contentEl.textContent = '';
+            }
+        }
+
         this.addLog('info', 'Prompt test cleared');
     }
 }
