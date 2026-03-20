@@ -4,7 +4,6 @@ flask-cors>=4.0.0
 
 # Core dependencies
 python-dotenv>=1.0.0
-python-dotenv
 
 # LLM APIs
 google-genai>=1.0.0
@@ -24,6 +23,9 @@ psutil>=5.9.0
 
 # Security
 cryptography>=40.0.0
+
+# Production server
+gunicorn>=21.2.0
 
 # Development tools
 pytest>=7.3.0
