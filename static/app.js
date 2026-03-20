@@ -14,68 +14,103 @@ class ExperimentApp {
     }
 
     bindEvents() {
-        // Start button
-        document.getElementById('startBtn').addEventListener('click', () => this.startExperiment());
-        
-        // Stop button
-        document.getElementById('stopBtn').addEventListener('click', () => this.stopExperiment());
-        
-        // Reset button
-        document.getElementById('resetBtn').addEventListener('click', () => this.resetForm());
-        
-        // Clear logs button
-        document.getElementById('clearLogsBtn').addEventListener('click', () => this.clearLogs());
-        
-        // Export buttons
-        document.getElementById('exportJsonBtn').addEventListener('click', () => this.exportJson());
-        document.getElementById('exportCsvBtn').addEventListener('click', () => this.exportCsv());
-        
-        // Custom prompt testing buttons
-        document.querySelectorAll('.prompt-test-panel').forEach(panel => {
-            const testBtn = panel.querySelector('.test-prompt-btn');
-            const clearBtn = panel.querySelector('.clear-prompt-btn');
-
-            if (testBtn) {
-                testBtn.dataset.originalHtml = testBtn.innerHTML;
-                testBtn.addEventListener('click', () => this.testCustomPrompt(testBtn));
-            }
-
-            if (clearBtn) {
-                clearBtn.addEventListener('click', () => this.clearPromptTest(clearBtn));
-            }
-        });
-        
-        // Slider value update
-        const pressureSlider = document.getElementById('time_pressure_ratio');
-        const pressureValue = document.getElementById('pressure_value');
-        pressureSlider.addEventListener('input', (e) => {
-            pressureValue.textContent = e.target.value;
-        });
-    }
+         // Start button
+         document.getElementById('startBtn').addEventListener('click', () => this.startExperiment());
+         
+         // Stop button
+         document.getElementById('stopBtn').addEventListener('click', () => this.stopExperiment());
+         
+         // Reset button
+         document.getElementById('resetBtn').addEventListener('click', () => this.resetForm());
+         
+         // Clear logs button
+         document.getElementById('clearLogsBtn').addEventListener('click', () => this.clearLogs());
+         
+         // Export buttons
+         document.getElementById('exportJsonBtn').addEventListener('click', () => this.exportJson());
+         document.getElementById('exportCsvBtn').addEventListener('click', () => this.exportCsv());
+         
+         // Experiment type radio buttons
+         document.querySelectorAll('input[name="experiment_type"]').forEach(radio => {
+             radio.addEventListener('change', () => this.handleExperimentTypeChange());
+         });
+         
+         // Custom prompt testing buttons
+         document.querySelectorAll('.prompt-test-panel').forEach(panel => {
+             const testBtn = panel.querySelector('.test-prompt-btn');
+             const clearBtn = panel.querySelector('.clear-prompt-btn');
+ 
+             if (testBtn) {
+                 testBtn.dataset.originalHtml = testBtn.innerHTML;
+                 testBtn.addEventListener('click', () => this.testCustomPrompt(testBtn));
+             }
+ 
+             if (clearBtn) {
+                 clearBtn.addEventListener('click', () => this.clearPromptTest(clearBtn));
+             }
+         });
+         
+         // Slider value update
+         const pressureSlider = document.getElementById('time_pressure_ratio');
+         const pressureValue = document.getElementById('pressure_value');
+         pressureSlider.addEventListener('input', (e) => {
+             pressureValue.textContent = e.target.value;
+         });
+         
+         // Initial state setup
+         this.handleExperimentTypeChange();
+     }
 
     getConfig() {
-        // Get selected time limits
-        const timeLimits = Array.from(document.querySelectorAll('input[name="time_limits"]:checked'))
-            .map(cb => parseFloat(cb.value));
-        
-        // Get selected task categories
-        const taskCategories = Array.from(document.querySelectorAll('input[name="task_categories"]:checked'))
-            .map(cb => cb.value);
-        
-        return {
-            experiment_name: document.getElementById('experiment_name').value || 'web_experiment',
-            task_count: parseInt(document.getElementById('task_count').value) || 10,
-            time_limits: timeLimits.length > 0 ? timeLimits : [1.0, 2.0, 3.0, 5.0, 10.0],
-            task_categories: taskCategories.length > 0 ? taskCategories : ['reasoning', 'creative', 'qa', 'analytical', 'problem_solving'],
-            difficulty_levels: [1, 2, 3, 4, 5],
-            time_pressure_ratio: parseFloat(document.getElementById('time_pressure_ratio').value) || 0.6,
-            quality_scoring_enabled: document.getElementById('quality_scoring_enabled').checked,
-            statistical_analysis_enabled: document.getElementById('statistical_analysis_enabled').checked,
-            output_formats: ['json'],
-            log_level: document.getElementById('log_level').value,
-            timeout: 600.0
-        };
-    }
+         // Check experiment type
+         const experimentType = document.querySelector('input[name="experiment_type"]:checked').value;
+         
+         if (experimentType === 'custom_prompt') {
+             // For custom prompt experiments, get values from the prompt test section
+             const promptInput = document.querySelector('.custom-prompt-input');
+             const timeLimitInput = document.querySelector('.prompt-time-limit-input');
+             const prompt = promptInput ? promptInput.value.trim() : '';
+             const timeLimit = timeLimitInput ? parseFloat(timeLimitInput.value) || 10 : 10;
+             
+             return {
+                 experiment_name: document.getElementById('experiment_name').value || 'custom_prompt_experiment',
+                 task_count: 1, // Single task for custom prompt
+                 time_limits: [timeLimit], // Use the specified time limit
+                 task_categories: ['custom'], // Special category for custom prompts
+                 difficulty_levels: [1],
+                 time_pressure_ratio: parseFloat(document.getElementById('time_pressure_ratio').value) || 0.6,
+                 quality_scoring_enabled: document.getElementById('quality_scoring_enabled').checked,
+                 statistical_analysis_enabled: document.getElementById('statistical_analysis_enabled').checked,
+                 output_formats: ['json'],
+                 log_level: document.getElementById('log_level').value,
+                 timeout: 600.0,
+                 custom_prompt: prompt // Pass the custom prompt to the backend
+             };
+         } else {
+             // Benchmark experiment type (original behavior)
+             // Get selected time limits
+             const timeLimits = Array.from(document.querySelectorAll('input[name="time_limits"]:checked'))
+                 .map(cb => parseFloat(cb.value));
+             
+             // Get selected task categories
+             const taskCategories = Array.from(document.querySelectorAll('input[name="task_categories"]:checked'))
+                 .map(cb => cb.value);
+             
+             return {
+                 experiment_name: document.getElementById('experiment_name').value || 'web_experiment',
+                 task_count: parseInt(document.getElementById('task_count').value) || 10,
+                 time_limits: timeLimits.length > 0 ? timeLimits : [1.0, 2.0, 3.0, 5.0, 10.0],
+                 task_categories: taskCategories.length > 0 ? taskCategories : ['reasoning', 'creative', 'qa', 'analytical', 'problem_solving'],
+                 difficulty_levels: [1, 2, 3, 4, 5],
+                 time_pressure_ratio: parseFloat(document.getElementById('time_pressure_ratio').value) || 0.6,
+                 quality_scoring_enabled: document.getElementById('quality_scoring_enabled').checked,
+                 statistical_analysis_enabled: document.getElementById('statistical_analysis_enabled').checked,
+                 output_formats: ['json'],
+                 log_level: document.getElementById('log_level').value,
+                 timeout: 600.0
+             };
+         }
+     }
 
     async startExperiment() {
         const config = this.getConfig();
@@ -493,48 +528,70 @@ class ExperimentApp {
     }
 
     clearPromptTest(clearButton) {
-        const panel = clearButton.closest('.prompt-test-panel');
-        if (!panel) {
-            return;
-        }
-
-        const promptInput = panel.querySelector('.custom-prompt-input');
-        const timeLimitInput = panel.querySelector('.prompt-time-limit-input');
-
-        if (promptInput) {
-            promptInput.value = '';
-        }
-
-        if (timeLimitInput) {
-            timeLimitInput.value = '10';
-        }
-
-        const resultsDiv = panel.querySelector('.prompt-test-results');
-        if (resultsDiv) {
-            resultsDiv.style.display = 'none';
-            const statusEl = resultsDiv.querySelector('.prompt-status-value');
-            if (statusEl) {
-                statusEl.textContent = '-';
-                statusEl.classList.remove('pending', 'completed', 'timeout', 'error');
-                statusEl.classList.add('status-badge', 'pending');
-            }
-            const timeEl = resultsDiv.querySelector('.prompt-time-elapsed-value');
-            if (timeEl) {
-                timeEl.textContent = '-';
-            }
-            const tokensEl = resultsDiv.querySelector('.prompt-tokens-value');
-            if (tokensEl) {
-                tokensEl.textContent = '-';
-            }
-            const contentEl = resultsDiv.querySelector('.prompt-response-content');
-            if (contentEl) {
-                contentEl.textContent = '';
-            }
-        }
-
-        this.addLog('info', 'Prompt test cleared');
-    }
-}
+         const panel = clearButton.closest('.prompt-test-panel');
+         if (!panel) {
+             return;
+         }
+ 
+         const promptInput = panel.querySelector('.custom-prompt-input');
+         const timeLimitInput = panel.querySelector('.prompt-time-limit-input');
+ 
+         if (promptInput) {
+             promptInput.value = '';
+         }
+ 
+         if (timeLimitInput) {
+             timeLimitInput.value = '10';
+         }
+ 
+         const resultsDiv = panel.querySelector('.prompt-test-results');
+         if (resultsDiv) {
+             resultsDiv.style.display = 'none';
+             const statusEl = resultsDiv.querySelector('.prompt-status-value');
+             if (statusEl) {
+                 statusEl.textContent = '-';
+                 statusEl.classList.remove('pending', 'completed', 'timeout', 'error');
+                 statusEl.classList.add('status-badge', 'pending');
+             }
+             const timeEl = resultsDiv.querySelector('.prompt-time-elapsed-value');
+             if (timeEl) {
+                 timeEl.textContent = '-';
+             }
+             const tokensEl = resultsDiv.querySelector('.prompt-tokens-value');
+             if (tokensEl) {
+                 tokensEl.textContent = '-';
+             }
+             const contentEl = resultsDiv.querySelector('.prompt-response-content');
+             if (contentEl) {
+                 contentEl.textContent = '';
+             }
+         }
+ 
+         this.addLog('info', 'Prompt test cleared');
+     }
+     
+     handleExperimentTypeChange() {
+         const experimentType = document.querySelector('input[name="experiment_type"]:checked').value;
+         const customPromptGroup = document.querySelector('.custom-prompt-group');
+         const benchmarkTasksGroup = document.querySelector('.benchmark-tasks-group');
+         
+         if (experimentType === 'custom_prompt') {
+             if (customPromptGroup) {
+                 customPromptGroup.style.display = 'block';
+             }
+             if (benchmarkTasksGroup) {
+                 benchmarkTasksGroup.style.display = 'none';
+             }
+         } else {
+             if (customPromptGroup) {
+                 customPromptGroup.style.display = 'none';
+             }
+             if (benchmarkTasksGroup) {
+                 benchmarkTasksGroup.style.display = 'block';
+             }
+         }
+     }
+ }
 
 // Initialize app when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {

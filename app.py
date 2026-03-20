@@ -33,93 +33,159 @@ def log_message(message):
         experiment_state["logs"] = experiment_state["logs"][-100:]
 
 def run_experiment_sync(config_dict):
-    global experiment_state
-    
-    try:
-        experiment_state["status"] = "running"
-        experiment_state["start_time"] = time.time()
-        experiment_state["logs"] = []
-        experiment_state["error"] = None
-        
-        log_message(f"Starting experiment: {config_dict.get('experiment_name', 'default')}")
-        
-        # Create experiment config
-        from run_pipeline import ExperimentConfig, ExperimentRunner
-        config = ExperimentConfig(
-            experiment_name=config_dict.get("experiment_name", "web_experiment"),
-            task_count=config_dict.get("task_count", 10),
-            time_limits=config_dict.get("time_limits", [1.0, 2.0, 3.0, 5.0, 10.0]),
-            task_categories=config_dict.get("task_categories", ["reasoning", "creative", "qa", "analytical", "problem_solving"]),
-            difficulty_levels=config_dict.get("difficulty_levels", [1, 2, 3, 4, 5]),
-            time_pressure_ratio=config_dict.get("time_pressure_ratio", 0.6),
-            quality_scoring_enabled=config_dict.get("quality_scoring_enabled", True),
-            statistical_analysis_enabled=config_dict.get("statistical_analysis_enabled", True),
-            output_formats=config_dict.get("output_formats", ["json"]),
-            log_level=config_dict.get("log_level", "INFO"),
-            timeout=config_dict.get("timeout", 600.0)
-        )
-        
-        # Force sequential execution to avoid API rate limiting
-        from config import get_config
-        cfg = get_config()
-        cfg.resources.max_concurrent_requests = 1
-        
-        experiment_state["total_tasks"] = config.task_count
-        
-        # Run experiment
-        runner = ExperimentRunner(config)
-        result = runner.run()
-        
-        # Store results
-        experiment_state["status"] = "completed"
-        experiment_state["end_time"] = time.time()
-        experiment_state["progress"] = 100
-        experiment_state["current_task"] = config.task_count
-        
-        # Convert results to serializable format
-        results_list = []
-        for eval_result in result.results:
-            results_list.append({
-                "task_id": eval_result.task_id,
-                "task_type": eval_result.task_type,
-                "time_limit": eval_result.time_limit,
-                "time_elapsed": eval_result.response.time_elapsed if eval_result.response else None,
-                "status": eval_result.response.status.value if eval_result.response and hasattr(eval_result.response.status, 'value') else str(eval_result.response.status if eval_result.response else 'unknown'),
-                "metrics": eval_result.metrics,
-                "output": eval_result.response.content[:500] if eval_result.response and eval_result.response.content else ""
-            })
-        
-        experiment_state["results"] = results_list
-        
-        # Calculate average quality score from the quality_scores dict
-        avg_quality = 0
-        if result.statistics and result.statistics.quality_scores:
-            quality_vals = list(result.statistics.quality_scores.values())
-            avg_quality = sum(quality_vals) / len(quality_vals) if quality_vals else 0
-        
-        experiment_state["statistics"] = {
-            "total_tasks": result.statistics.total_tasks if result.statistics else 0,
-            "completed_tasks": result.statistics.completed_tasks if result.statistics else 0,
-            "timed_out_tasks": result.statistics.timed_out_tasks if result.statistics else 0,
-            "error_tasks": result.statistics.error_tasks if result.statistics else 0,
-            "avg_completion_rate": result.statistics.avg_completion_rate if result.statistics else 0,
-            "avg_response_time": result.statistics.avg_response_time if result.statistics else 0,
-            "avg_quality_score": avg_quality,
-            "avg_output_length": result.statistics.avg_output_length if result.statistics else 0
-        }
-        
-        duration = experiment_state["end_time"] - experiment_state["start_time"]
-        log_message(f"Experiment completed in {duration:.2f} seconds")
-        log_message(f"Completed: {result.statistics.completed_tasks if result.statistics else 0}/{config.task_count} tasks")
-        
-        return {"status": "completed", "message": "Experiment completed successfully"}
-        
-    except Exception as e:
-        experiment_state["status"] = "error"
-        experiment_state["end_time"] = time.time()
-        experiment_state["error"] = str(e)
-        log_message(f"Error: {str(e)}")
-        return {"status": "error", "message": str(e)}
+     global experiment_state
+     
+     try:
+         experiment_state["status"] = "running"
+         experiment_state["start_time"] = time.time()
+         experiment_state["logs"] = []
+         experiment_state["error"] = None
+         
+         # Check if this is a custom prompt experiment
+         is_custom_prompt = config_dict.get("custom_prompt") is not None and config_dict.get("custom_prompt") != ""
+         
+         log_message(f"Starting experiment: {config_dict.get('experiment_name', 'default')} {'(Custom Prompt)' if is_custom_prompt else ''}")
+         
+         if is_custom_prompt:
+             # Handle custom prompt experiment
+             result = run_custom_prompt_experiment(config_dict)
+         else:
+             # Handle standard benchmark experiment
+             # Create experiment config
+             from run_pipeline import ExperimentConfig, ExperimentRunner
+             config = ExperimentConfig(
+                 experiment_name=config_dict.get("experiment_name", "web_experiment"),
+                 task_count=config_dict.get("task_count", 10),
+                 time_limits=config_dict.get("time_limits", [1.0, 2.0, 3.0, 5.0, 10.0]),
+                 task_categories=config_dict.get("task_categories", ["reasoning", "creative", "qa", "analytical", "problem_solving"]),
+                 difficulty_levels=config_dict.get("difficulty_levels", [1, 2, 3, 4, 5]),
+                 time_pressure_ratio=config_dict.get("time_pressure_ratio", 0.6),
+                 quality_scoring_enabled=config_dict.get("quality_scoring_enabled", True),
+                 statistical_analysis_enabled=config_dict.get("statistical_analysis_enabled", True),
+                 output_formats=config_dict.get("output_formats", ["json"]),
+                 log_level=config_dict.get("log_level", "INFO"),
+                 timeout=config_dict.get("timeout", 600.0)
+             )
+             
+             # Force sequential execution to avoid API rate limiting
+             from config import get_config
+             cfg = get_config()
+             cfg.resources.max_concurrent_requests = 1
+             
+             experiment_state["total_tasks"] = config.task_count
+             
+             # Run experiment
+             runner = ExperimentRunner(config)
+             result = runner.run()
+         
+         # Store results
+         experiment_state["status"] = "completed"
+         experiment_state["end_time"] = time.time()
+         experiment_state["progress"] = 100
+         experiment_state["current_task"] = 1 if is_custom_prompt else config.task_count if not is_custom_prompt else 1
+         
+         # Convert results to serializable format
+         results_list = []
+         for eval_result in result.results:
+             results_list.append({
+                 "task_id": eval_result.task_id,
+                 "task_type": eval_result.task_type,
+                 "time_limit": eval_result.time_limit,
+                 "time_elapsed": eval_result.response.time_elapsed if eval_result.response else None,
+                 "status": eval_result.response.status.value if eval_result.response and hasattr(eval_result.response.status, 'value') else str(eval_result.response.status if eval_result.response else 'unknown'),
+                 "metrics": eval_result.metrics,
+                 "output": eval_result.response.content[:500] if eval_result.response and eval_result.response.content else ""
+             })
+         
+         experiment_state["results"] = results_list
+         
+         # Calculate average quality score from the quality_scores dict
+         avg_quality = 0
+         if result.statistics and result.statistics.quality_scores:
+             quality_vals = list(result.statistics.quality_scores.values())
+             avg_quality = sum(quality_vals) / len(quality_vals) if quality_vals else 0
+         
+         experiment_state["statistics"] = {
+             "total_tasks": result.statistics.total_tasks if result.statistics else 0,
+             "completed_tasks": result.statistics.completed_tasks if result.statistics else 0,
+             "timed_out_tasks": result.statistics.timed_out_tasks if result.statistics else 0,
+             "error_tasks": result.statistics.error_tasks if result.statistics else 0,
+             "avg_completion_rate": result.statistics.avg_completion_rate if result.statistics else 0,
+             "avg_response_time": result.statistics.avg_response_time if result.statistics else 0,
+             "avg_quality_score": avg_quality,
+             "avg_output_length": result.statistics.avg_output_length if result.statistics else 0
+         }
+         
+         duration = experiment_state["end_time"] - experiment_state["start_time"]
+         log_message(f"Experiment completed in {duration:.2f} seconds")
+         if is_custom_prompt:
+             log_message(f"Custom prompt test completed")
+         else:
+             log_message(f"Completed: {result.statistics.completed_tasks if result.statistics else 0}/{config.task_count} tasks")
+         
+         return {"status": "completed", "message": "Experiment completed successfully"}
+         
+     except Exception as e:
+         experiment_state["status"] = "error"
+         experiment_state["end_time"] = time.time()
+         experiment_state["error"] = str(e)
+         log_message(f"Error: {str(e)}")
+         return {"status": "error", "message": str(e)}
+
+
+def run_custom_prompt_experiment(config_dict):
+     """Run a single custom prompt experiment"""
+     from run_pipeline import ExperimentConfig, ExperimentRunner
+     from tasks import Task, TaskCategory, TaskDifficulty
+     from core.llm import LLMResponse, LLMResponseStatus
+     from core.evaluator import EvaluationResult
+     import time
+     
+     # Create a custom task
+     custom_task = Task(
+         name="Custom Prompt",
+         description="User-provided custom prompt",
+         category=TaskCategory.CUSTOM,
+         difficulty=TaskDifficulty.LEVEL_1,
+         prompt_template="{prompt}"  # Will be replaced with actual prompt
+     )
+     
+     # Create experiment config for single task
+     config = ExperimentConfig(
+         experiment_name=config_dict.get("experiment_name", "custom_prompt_experiment"),
+         task_count=1,
+         time_limits=config_dict.get("time_limits", [10.0]),
+         task_categories=["custom"],
+         difficulty_levels=[1],
+         time_pressure_ratio=config_dict.get("time_pressure_ratio", 0.6),
+         quality_scoring_enabled=config_dict.get("quality_scoring_enabled", True),
+         statistical_analysis_enabled=config_dict.get("statistical_analysis_enabled", True),
+         output_formats=config_dict.get("output_formats", ["json"]),
+         log_level=config_dict.get("log_level", "INFO"),
+         timeout=config_dict.get("timeout", 600.0)
+     )
+     
+     # Override the task manager to use our custom task
+     from run_pipeline import ExperimentRunner
+     runner = ExperimentRunner(config)
+     
+     # Replace the task manager's generate_benchmark_batch method to return our custom task
+     original_generate_benchmark_batch = runner._task_manager.generate_benchmark_batch
+     
+     def custom_generate_benchmark_batch(count, time_pressure_ratio):
+         time_limit = config.time_limits[0] if config.time_limits else 10.0
+         is_pressure = time_pressure_ratio > 0.5  # Simple logic for time pressure
+         return [(custom_task, config_dict.get("custom_prompt", ""), time_limit, is_pressure)]
+     
+     runner._task_manager.generate_benchmark_batch = custom_generate_benchmark_batch
+     
+     # Run the experiment
+     result = runner.run()
+     
+     # Restore original method
+     runner._task_manager.generate_benchmark_batch = original_generate_benchmark_batch
+     
+     return result
 
 @app.route('/')
 def home():
