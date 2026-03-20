@@ -129,10 +129,15 @@ See `.env.example` for all available configuration options.
 
 ### Common Issues
 
-1. **Import Errors**: Ensure all dependencies are in `requirements.txt`
-2. **API Key Errors**: Verify `LLM_API_KEY` is set in Netlify environment variables
-3. **Timeout Errors**: Reduce task count or time limits significantly
-4. **Memory Errors**: Optimize data processing or reduce batch sizes
+1. **Page not found error**: 
+   - Check that `netlify.toml` has correct redirects
+   - Ensure `publish = "static"` is set in `[build]` section
+   - Verify that `index.html` exists in the `static` directory
+
+2. **Import Errors**: Ensure all dependencies are in `requirements.txt`
+3. **API Key Errors**: Verify `LLM_API_KEY` is set in Netlify environment variables
+4. **Timeout Errors**: Reduce task count or time limits significantly
+5. **Memory Errors**: Optimize data processing or reduce batch sizes
 
 ### Debugging
 

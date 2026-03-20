@@ -1,7 +1,7 @@
 import os
 import sys
-from flask import Flask, request, jsonify, render_template
-from flask_cors import CORS
+import json
+from flask import Flask, request, jsonify
 
 # Add the project root to Python path
 project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -63,5 +63,5 @@ def handler(event, context):
         return {
             'statusCode': 500,
             'headers': {'Content-Type': 'application/json'},
-            'body': jsonify({'error': str(e)}).get_data(as_text=True)
+            'body': json.dumps({'error': str(e)})
         }
