@@ -1,31 +1,26 @@
 [build]
   command = "pip install -r requirements.txt"
-  functions = "netlify/functions"
-  publish = "static"
-
-[build.environment]
-  PYTHON_VERSION = "3.9"
-  ENVIRONMENT = "production"
+  publish = "."
 
 [[redirects]]
   from = "/api/*"
   to = "/.netlify/functions/api/:splat"
   status = 200
-  force = true
 
 [[redirects]]
   from = "/static/*"
-  to = "/:splat"
+  to = "/static/:splat"
   status = 200
 
 [[redirects]]
-  from = "/(.*)"
-  to = "/.netlify/functions/api/:1"
+  from = "/experiment"
+  to = "/experiment.html"
   status = 200
-  force = true
- [functions]
-  node_bundler = "esbuild"
-  external_node_modules = ["express"]
+
+[[redirects]]
+  from = "/"
+  to = "/home.html"
+  status = 200
 
 [[headers]]
   for = "/*"
