@@ -3,10 +3,10 @@ import sys
 import json
 import time
 from datetime import datetime
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify, render_template, send_from_directory
 from flask_cors import CORS
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='static', static_url_path='/static')
 CORS(app)
 
 # Store experiment state (in-memory for serverless - will reset on cold starts)
