@@ -21,6 +21,8 @@ def handler(event, context):
             path = path[len(prefix):]
             if path == '':
                 path = '/'
+            elif not path.startswith('/'):
+                path = '/' + path
         headers = event.get('headers', {})
         query_string = event.get('queryStringParameters', {}) or {}
         body = event.get('body', '')
@@ -48,6 +50,14 @@ def handler(event, context):
                 response = client.delete(path, headers=headers, query_string=query_string)
             else:
                 response = client.get(path, headers=headers, query_string=query_string)
+
+            # If we get a 404, return a plain text message with the path for debugging
+            if response.status_code == 404:
+                return {
+                    'statusCode': 404,
+                    'headers': {'Content-Type': 'text/plain'},
+                    'body': f'Not found: {path}'
+                }
 
             return {
                 'statusCode': response.status_code,
