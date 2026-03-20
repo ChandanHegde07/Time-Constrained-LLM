@@ -172,7 +172,8 @@ def start_experiment():
         "end_time": None,
         "error": None
     }
-
+    
+    # Run experiment synchronously (serverless-compatible)
     result = run_experiment_sync(config)
     
     return jsonify(result)
@@ -214,6 +215,7 @@ def get_results():
 
 @app.route('/api/logs', methods=['GET'])
 def get_logs():
+    """Get experiment logs"""
     return jsonify({"logs": experiment_state["logs"]})
 
 @app.route('/api/test-prompt', methods=['POST'])
