@@ -1,7 +1,7 @@
 [build]
   command = "pip install -r requirements.txt"
   functions = "netlify/functions"
-  publish = "static"
+  publish = "templates"
 
 [build.environment]
   PYTHON_VERSION = "3.9"
@@ -15,7 +15,7 @@
 
 [[redirects]]
   from = "/*"
-  to = "/index.html"
+  to = "/home.html"
   status = 200
 
 [functions]

@@ -23,7 +23,6 @@ experiment_state = {
 }
 
 def log_message(message):
-    """Add log message to experiment state"""
     timestamp = datetime.now().strftime("%H:%M:%S")
     experiment_state["logs"].append({
         "timestamp": timestamp,
@@ -34,7 +33,6 @@ def log_message(message):
         experiment_state["logs"] = experiment_state["logs"][-100:]
 
 def run_experiment_sync(config_dict):
-    """Run experiment synchronously (serverless-compatible)"""
     global experiment_state
     
     try:
@@ -125,17 +123,14 @@ def run_experiment_sync(config_dict):
 
 @app.route('/')
 def home():
-    """Serve the home page"""
     return render_template('home.html')
 
 @app.route('/experiment')
 def experiment():
-    """Serve the experiment page"""
     return render_template('experiment.html')
 
 @app.route('/api/config', methods=['GET'])
 def get_default_config():
-    """Get default configuration options"""
     return jsonify({
         "experiment_name": "web_experiment",
         "task_count": 10,
@@ -150,7 +145,6 @@ def get_default_config():
 
 @app.route('/api/start', methods=['POST'])
 def start_experiment():
-    """Start a new experiment (synchronous for serverless)"""
     global experiment_state
     
     try:
@@ -180,14 +174,12 @@ def start_experiment():
         "error": None
     }
     
-    # Run experiment synchronously (serverless-compatible)
     result = run_experiment_sync(config)
     
     return jsonify(result)
 
 @app.route('/api/status', methods=['GET'])
 def get_status():
-    """Get current experiment status"""
     state = experiment_state.copy()
     
     # Calculate progress
@@ -216,7 +208,6 @@ def stop_experiment():
 
 @app.route('/api/results', methods=['GET'])
 def get_results():
-    """Get experiment results"""
     return jsonify({
         "results": experiment_state["results"],
         "statistics": experiment_state.get("statistics", {}),
@@ -225,12 +216,10 @@ def get_results():
 
 @app.route('/api/logs', methods=['GET'])
 def get_logs():
-    """Get experiment logs"""
     return jsonify({"logs": experiment_state["logs"]})
 
 @app.route('/api/test-prompt', methods=['POST'])
 def test_prompt():
-    """Test a custom prompt with time constraint"""
     try:
         if not request.is_json:
             return jsonify({"error": "Request must be JSON"}), 400
@@ -273,7 +262,6 @@ def test_prompt():
 
 @app.route('/api/health', methods=['GET'])
 def health_check():
-    """Health check endpoint for Netlify"""
     return jsonify({
         "status": "healthy",
         "timestamp": datetime.now().isoformat(),
