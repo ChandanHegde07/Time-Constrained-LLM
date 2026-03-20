@@ -14,12 +14,12 @@
 
 [[redirects]]
   from = "/experiment"
-  to = "/experiment.html"
+  to = "/.netlify/functions/api/experiment"
   status = 200
 
 [[redirects]]
   from = "/"
-  to = "/home.html"
+  to = "/.netlify/functions/api/"
   status = 200
 
 [[headers]]

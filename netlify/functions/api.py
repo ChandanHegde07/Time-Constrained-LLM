@@ -16,6 +16,11 @@ def handler(event, context):
     try:
         http_method = event.get('httpMethod', 'GET')
         path = event.get('path', '/')
+        prefix = '/.netlify/functions/api/'
+        if path.startswith(prefix):
+            path = path[len(prefix):]
+            if path == '':
+                path = '/'
         headers = event.get('headers', {})
         query_string = event.get('queryStringParameters', {}) or {}
         body = event.get('body', '')
