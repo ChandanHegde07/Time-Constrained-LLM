@@ -18,9 +18,10 @@ By enforcing hard time limits with nanosecond precision and capturing partial ou
 - **Side-by-side comparison** of normal vs. time-pressured outputs
 - **Comprehensive metrics**: completion rate, token rate, quality score, error rate, and more
 - **Statistical analysis**: confidence intervals, correlation analysis, distribution summaries
-- **Dynamic task generation** across six cognitive domains with five difficulty levels
+- **Dynamic task generation** across ten cognitive domains with five difficulty levels
 - **Google Gemini** support via the Gemini API
 - **Web Interface** — modern browser-based UI for running experiments
+- **Custom Prompt Testing** — test your own prompts with configurable time limits
 
 ---
 
@@ -69,6 +70,7 @@ Then open **http://localhost:5001** in your browser.
 | Endpoint | Method | Description |
 |----------|--------|-------------|
 | `/` | GET | Main web interface |
+| `/experiment` | GET | Experiment runner interface |
 | `/api/config` | GET | Get default configuration |
 | `/api/start` | POST | Start new experiment |
 | `/api/status` | GET | Get experiment status |
@@ -76,6 +78,7 @@ Then open **http://localhost:5001** in your browser.
 | `/api/results` | GET | Get experiment results |
 | `/api/logs` | GET | Get experiment logs |
 | `/api/test-prompt` | POST | Test custom prompt with time limit |
+| `/api/health` | GET | Health check endpoint |
 
 ---
 
