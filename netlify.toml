@@ -8,6 +8,12 @@
 [functions]
   directory = "functions"
 
+[[redirects]]
+  from = "/*"
+  to = "/.netlify/functions/handler"
+  status = 200
+  force = true
+
 [[headers]]
   for = "/*"
   [headers.values]

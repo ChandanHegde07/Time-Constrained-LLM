@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Test and analyze Large Language Models under realistic time pressure constraints">
+    <title>Time Constrained LLM Testing System - DOS Terminal</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --dos-black:        #000000;
+            --dos-blue:         #0000AA;
+            --dos-green:        #00AA00;
+            --dos-cyan:         #00AAAA;
+            --dos-red:          #AA0000;
+            --dos-magenta:      #AA00AA;
+            --dos-brown:        #AA5500;
+            --dos-light-gray:   #AAAAAA;
+            --dos-dark-gray:    #555555;
+            --dos-light-blue:   #5555FF;
+            --dos-light-green:  #55FF55;
+            --dos-light-cyan:   #55FFFF;
+            --dos-light-red:    #FF5555;
+            --dos-light-magenta:#FF55FF;
+            --dos-yellow:       #FFFF55;
+            --dos-white:        #FFFFFF;
+
+            --bg-primary:       var(--dos-blue);
+            --bg-secondary:     var(--dos-black);
+            --text-primary:     var(--dos-white);
+            --text-secondary:   var(--dos-light-cyan);
+            --text-muted:       var(--dos-light-gray);
+            --border-color:     var(--dos-light-gray);
+            --accent:           var(--dos-yellow);
+            
+            --font-mono: 'Fira Code', 'Consolas', 'Courier New', monospace;
+            
+            --transition-smooth: 0s;
+        }
+        
+        html {
+            scroll-behavior: auto;
+        }
+        
+        body {
+            overflow-x: hidden;
+            font-family: var(--font-mono);
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            background-image: linear-gradient(rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0.1) 50%);
+            background-size: 100% 4px;
+        }
+
+        *, *::before, *::after {
+            border-radius: 0 !important; 
+        }
+        
+        .animate-on-scroll {
+            visibility: hidden;
+        }
+        
+        .animate-on-scroll.visible {
+            visibility: visible;
+            animation: terminal-appear 0.1s steps(1) forwards;
+        }
+
+        @keyframes terminal-appear {
+            0% { opacity: 0; background-color: var(--dos-white); color: var(--dos-black); }
+            50% { opacity: 1; background-color: var(--dos-white); color: var(--dos-black); }
+            100% { opacity: 1; }
+        }
+        
+        a:focus-visible, button:focus-visible {
+            outline: 2px dashed var(--accent);
+            outline-offset: 4px;
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-family: var(--font-mono);
+            font-weight: 700;
+            text-transform: uppercase;
+            text-decoration: none;
+            cursor: pointer;
+            box-shadow: 4px 4px 0px var(--dos-black);
+            transition: none;
+        }
+        
+        .btn:active {
+            transform: translate(4px, 4px);
+            box-shadow: none;
+        }
+        
+        svg {
+            stroke: currentColor;
+            filter: drop-shadow(2px 2px 0px var(--dos-black));
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .animate-on-scroll {
+                visibility: visible;
+                animation: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <svg width="48" height="48" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" style="color: var(--dos-yellow);">
+                        <circle cx="20" cy="20" r="18" stroke="currentColor" stroke-width="2.5"/>
+                        <path d="M12 20L18 26L28 14" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <h1>Time Constrained <span>LLM Testing</span></h1>
+                </div>
+                <p class="subtitle">Understand how time limits affect AI model performance</p>
+            </div>
+        </header>
+
+        <main>
+            <section class="hero-section" aria-label="Introduction">
+                <div class="hero-bg" aria-hidden="true">
+                    <div class="hero-grid"></div>
+                    <div class="floating-shapes">
+                        <div class="shape shape-1">[:::]</div>
+                        <div class="shape shape-2">####</div>
+                        <div class="shape shape-3">/***\]</div>
+                    </div>
+                </div>
+                <div class="hero-content">
+                    <div class="hero-badge animate-on-scroll">> AI_PERFORMANCE_TESTING.EXE</div>
+                    <h2 class="animate-on-scroll delay-1">Test AI Models Under<br/><span class="gradient-text">Realistic Time Pressure</span></h2>
+                    <p class="hero-description animate-on-scroll delay-2">
+                        Evaluate Large Language Models under various time constraints to understand 
+                        how response time limits affect output quality, completion rates, and overall performance.
+                    </p>
+                    <div class="hero-actions animate-on-scroll delay-3">
+                        <a href="/experiment" class="btn btn-primary btn-large">
+                            <span>Start Now</span>
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M4 10H16M16 10L11 5M16 10L11 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </a>
+                        <a href="#features" class="btn btn-secondary btn-large">
+                            <span>Learn More</span>
+                        </a>
+                    </div>
+                    <div class="hero-stats animate-on-scroll delay-4">
+                        <div class="hero-stat">
+                            <span class="stat-number">5</span>
+                            <span class="stat-label">Task Types</span>
+                        </div>
+                        <div class="hero-stat-divider"></div>
+                        <div class="hero-stat">
+                            <span class="stat-number">30</span>
+                            <span class="stat-label">Max Secs</span>
+                        </div>
+                        <div class="hero-stat-divider"></div>
+                        <div class="hero-stat">
+                            <span class="stat-number">100</span>
+                            <span class="stat-label">Scenarios</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="features-section" id="features">
+                <div class="section-header animate-on-scroll">
+                    <h3 class="section-title">Powerful Features</h3>
+                    <p class="section-subtitle">Everything you need to test and analyze LLM performance</p>
+                </div>
+                <div class="features-grid">
+                    <div class="feature-card animate-on-scroll">
+                        <div class="feature-title-bar">MODULE 01</div>
+                        <div class="feature-icon-wrapper">
+                            <div class="feature-icon" style="color: var(--dos-light-cyan);">
+                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2"/>
+                                    <path d="M12 7V12L15 14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <h4>Configurable Time Limits</h4>
+                        <p>Set time limits from 1 to 30 seconds. Test how models perform under different pressure levels.</p>
+                        <div class="feature-arrow">=></div>
+                    </div>
+                    
+                    <div class="feature-card animate-on-scroll delay-1">
+                        <div class="feature-title-bar">MODULE 02</div>
+                        <div class="feature-icon-wrapper">
+                            <div class="feature-icon" style="color: var(--dos-light-green);">
+                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <rect x="3" y="3" width="18" height="18" rx="3" stroke="currentColor" stroke-width="2"/>
+                                    <path d="M3 9H21M9 21V9" stroke="currentColor" stroke-width="2"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <h4>Multiple Task Categories</h4>
+                        <p>Test reasoning, creative writing, Q&A, analysis, and problem-solving tasks.</p>
+                        <div class="feature-arrow">=></div>
+                    </div>
+                    
+                    <div class="feature-card animate-on-scroll delay-2">
+                        <div class="feature-title-bar">MODULE 03</div>
+                        <div class="feature-icon-wrapper">
+                            <div class="feature-icon" style="color: var(--dos-light-red);">
+                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M22 12H18L15 21L9 3L6 12H2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <h4>Quality Scoring</h4>
+                        <p>Automatic evaluation with detailed metrics and comprehensive statistical analysis.</p>
+                        <div class="feature-arrow">=></div>
+                    </div>
+                    
+                    <div class="feature-card animate-on-scroll delay-3">
+                        <div class="feature-title-bar">MODULE 04</div>
+                        <div class="feature-icon-wrapper">
+                            <div class="feature-icon" style="color: var(--dos-yellow);">
+                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M14 2H6C5.46957 2 4.96086 2.21071 4.58579 2.58579C4.21071 2.96086 4 3.46957 4 4V20C4 20.5304 4.21071 21.0391 4.58579 21.4142C4.96086 21.7893 5.46957 22 6 22H18C18.5304 22 19.0391 21.7893 19.4142 21.4142C19.7893 21.0391 20 20.5304 20 20V8L14 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M14 2V8H20M16 13H8M16 17H8M10 9H8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <h4>Detailed Reports</h4>
+                        <p>Export results in JSON and CSV formats for further analysis and documentation.</p>
+                        <div class="feature-arrow">=></div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="how-it-works-section" aria-labelledby="how-it-works-title">
+                <div class="section-header animate-on-scroll">
+                    <h3 class="section-title" id="how-it-works-title">How It Works</h3>
+                    <p class="section-subtitle">Three simple steps to analyze LLM performance</p>
+                </div>
+                <div class="steps-container">
+                    <div class="step">
+                        <div class="step-card">
+                            <div class="step-number">[1]</div>
+                            <div class="step-icon" style="color: var(--dos-light-cyan);">
+                                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
+                                    <path d="M12 5V3M12 21V19M5 12H3M21 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                </svg>
+                            </div>
+                            <div class="step-content">
+                                <h4>Configure</h4>
+                                <p>Set time limits, choose task categories, and adjust difficulty levels.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="step-connector">
+                        <div class="connector-line"></div>
+                        <div class="connector-arrow">></div>
+                    </div>
+                    <div class="step">
+                        <div class="step-card">
+                            <div class="step-number">[2]</div>
+                            <div class="step-icon" style="color: var(--dos-yellow);">
+                                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M5 12H19M19 12L14 7M19 12L14 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M19 7V12H14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                            <div class="step-content">
+                                <h4>Execute Tests</h4>
+                                <p>Send prompts to the LLM and measure responses under time pressure.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="step-connector">
+                        <div class="connector-line"></div>
+                        <div class="connector-arrow">></div>
+                    </div>
+                    <div class="step">
+                        <div class="step-card">
+                            <div class="step-number">[3]</div>
+                            <div class="step-icon" style="color: var(--dos-light-green);">
+                                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M22 11.08V12C21.9988 14.1564 21.3005 16.2547 20.0093 17.9818C18.7182 19.709 16.9033 20.9725 14.8354 21.5839C12.7674 22.1953 10.5573 22.1219 8.53447 21.3746C6.51168 20.6273 4.78465 19.2461 3.61096 17.4371C2.43727 15.628 1.87979 13.4881 2.02168 11.3363C2.16356 9.18455 2.99721 7.13631 4.39828 5.49706C5.79935 3.85781 7.69279 2.71537 9.79619 2.24013C11.8996 1.7649 14.1003 1.98232 16.07 2.85999" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M22 4L12 14.01L9 11.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                            <div class="step-content">
+                                <h4>View Results</h4>
+                                <p>Analyze completion rates, response quality, and detailed metrics.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="why-section animate-on-scroll" aria-labelledby="why-title">
+                <div class="why-content">
+                    <div class="why-text">
+                        <h3 id="why-title">Why Time Constrained Testing?</h3>
+                        <p>
+                            In real-world applications, AI responses often need to meet strict time requirements. 
+                            This testing framework helps researchers and developers understand the trade-offs 
+                            between response speed and output quality.
+                        </p>
+                        <ul class="why-list">
+                            <li>
+                                <span class="why-icon" style="color: var(--dos-light-green);">[+]</span>
+                                <span>Identify optimal time limits for your use case</span>
+                            </li>
+                            <li>
+                                <span class="why-icon" style="color: var(--dos-light-green);">[+]</span>
+                                <span>Compare model performance across constraints</span>
+                            </li>
+                            <li>
+                                <span class="why-icon" style="color: var(--dos-light-green);">[+]</span>
+                                <span>Measure time pressure impact on accuracy</span>
+                            </li>
+                            <li>
+                                <span class="why-icon" style="color: var(--dos-light-green);">[+]</span>
+                                <span>Make informed latency vs quality decisions</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="why-visual">
+                        <div class="visual-card">
+                            <div class="visual-chart">
+                                <div class="chart-bar" style="height: 30%;">
+                                    <span class="bar-label">1s</span>
+                                </div>
+                                <div class="chart-bar" style="height: 50%;">
+                                    <span class="bar-label">5s</span>
+                                </div>
+                                <div class="chart-bar" style="height: 75%;">
+                                    <span class="bar-label">10s</span>
+                                </div>
+                                <div class="chart-bar active" style="height: 95%;">
+                                    <span class="bar-label">30s</span>
+                                </div>
+                            </div>
+                            <p class="visual-caption">Quality increases with more time...</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="cta-section animate-on-scroll" aria-label="Get started">
+                <div class="cta-content">
+                    <h3>Ready to Test Your LLM?</h3>
+                    <p>Start your first experiment and discover how time constraints affect AI performance.</p>
+                    <a href="/experiment" class="btn btn-primary btn-large">
+                        <span>LAUNCH_EXPERIMENT.BAT</span>
+                    </a>
+                </div>
+            </section>
+        </main>
+
+        <footer class="footer" role="contentinfo">
+            <p>C:\> COPYRIGHT (C) 2026 Time Constrained LLM Testing System. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <style>
+        .hero-section {
+            position: relative;
+            padding: 80px 40px;
+            margin-bottom: 80px;
+            background: var(--dos-black);
+            border: 4px double var(--dos-white);
+            box-shadow: 16px 16px 0 var(--dos-black);
+        }
+
+        .hero-bg {
+            position: absolute;
+            inset: 0;
+            overflow: hidden;
+        }
+
+        .hero-grid {
+            position: absolute;
+            inset: 0;
+            background-image: 
+                linear-gradient(var(--dos-dark-gray) 1px, transparent 1px),
+                linear-gradient(90deg, var(--dos-dark-gray) 1px, transparent 1px);
+            background-size: 40px 40px;
+            opacity: 0.3;
+        }
+        
+        .floating-shapes {
+            position: absolute;
+            inset: 0;
+            overflow: hidden;
+            pointer-events: none;
+            color: var(--dos-dark-gray);
+            font-size: 24px;
+            font-weight: bold;
+        }
+        
+        .shape { position: absolute; }
+        .shape-1 { top: 20%; right: 10%; }
+        .shape-2 { bottom: 20%; left: 10%; letter-spacing: 10px; }
+        .shape-3 { top: 50%; left: 20%; transform: rotate(90deg); }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            background: var(--dos-black);
+            border: 2px solid var(--dos-light-cyan);
+            color: var(--dos-light-cyan);
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-bottom: 24px;
+        }
+
+        .hero-content h2 {
+            font-size: 48px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            line-height: 1.2;
+            text-transform: uppercase;
+            text-shadow: 4px 4px 0 var(--dos-black);
+        }
+
+        .gradient-text {
+            color: var(--dos-yellow);
+            text-shadow: 4px 4px 0 var(--dos-black);
+        }
+
+        .hero-description {
+            font-size: 16px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+            margin-bottom: 32px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            background: var(--dos-black);
+            padding: 16px;
+            border: 1px dashed var(--dos-light-gray);
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            margin-bottom: 48px;
+        }
+
+        .btn-large {
+            padding: 12px 24px;
+            font-size: 16px;
+        }
+
+        .btn-primary {
+            background: var(--dos-light-cyan);
+            color: var(--dos-black);
+            border: 2px solid var(--dos-white);
+            border-bottom-color: var(--dos-black);
+            border-right-color: var(--dos-black);
+        }
+
+        .btn-primary:hover {
+            background: var(--dos-white);
+        }
+
+        .btn-secondary {
+            background: var(--dos-dark-gray);
+            color: var(--dos-white);
+            border: 2px solid var(--dos-white);
+            border-bottom-color: var(--dos-black);
+            border-right-color: var(--dos-black);
+        }
+
+        .btn-secondary:hover {
+            background: var(--dos-light-gray);
+            color: var(--dos-black);
+        }
+
+        .hero-stats {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 32px;
+            padding: 16px;
+            background: var(--dos-black);
+            border: 2px solid var(--dos-light-gray);
+        }
+
+        .hero-stat {
+            text-align: center;
+        }
+
+        .stat-number {
+            display: block;
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--dos-yellow);
+        }
+        
+        .stat-number::before { content: '['; color: var(--dos-white); }
+        .stat-number::after { content: ']'; color: var(--dos-white); }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--dos-light-cyan);
+            text-transform: uppercase;
+        }
+
+        .hero-stat-divider {
+            width: 2px;
+            height: 40px;
+            background: dashed var(--dos-dark-gray);
+            border-left: 2px dashed var(--dos-dark-gray);
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        .section-title {
+            display: inline-block;
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--dos-yellow);
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            border-bottom: 2px solid var(--dos-white);
+            padding-bottom: 4px;
+        }
+
+        .section-subtitle {
+            font-size: 16px;
+            color: var(--dos-light-cyan);
+        }
+
+        .features-section {
+            margin-bottom: 100px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+        }
+
+        .feature-card {
+            position: relative;
+            background: var(--dos-blue);
+            border: 2px solid var(--dos-light-gray);
+            padding: 32px 24px 24px;
+            box-shadow: 8px 8px 0 var(--dos-black);
+        }
+
+        .feature-title-bar {
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            background: var(--dos-light-gray);
+            color: var(--dos-black);
+            font-size: 12px;
+            font-weight: bold;
+            padding: 2px 8px;
+            text-align: center;
+        }
+
+        .feature-card:hover {
+            border-color: var(--dos-yellow);
+            transform: translate(-4px, -4px);
+            box-shadow: 12px 12px 0 var(--dos-black);
+        }
+        
+        .feature-card:hover .feature-title-bar {
+            background: var(--dos-yellow);
+        }
+
+        .feature-icon-wrapper {
+            margin-top: 10px;
+            width: 56px;
+            height: 56px;
+            background: var(--dos-black);
+            border: 2px solid var(--dos-dark-gray);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .feature-card h4 {
+            font-size: 16px;
+            font-weight: bold;
+            color: var(--dos-white);
+            margin-bottom: 12px;
+            text-transform: uppercase;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--dos-light-cyan);
+            line-height: 1.4;
+            margin-bottom: 16px;
+        }
+
+        .feature-arrow {
+            color: var(--dos-yellow);
+            font-weight: bold;
+            font-size: 18px;
+            opacity: 0;
+        }
+
+        .feature-card:hover .feature-arrow {
+            opacity: 1;
+        }
+
+        .how-it-works-section {
+            margin-bottom: 100px;
+        }
+
+        .steps-container {
+            display: flex;
+            align-items: stretch;
+            justify-content: center;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .step {
+            flex: 1;
+            max-width: 300px;
+        }
+
+        .step-card {
+            background: var(--dos-black);
+            border: 2px dashed var(--dos-light-gray);
+            padding: 32px 24px;
+            text-align: center;
+            position: relative;
+        }
+
+        .step-card:hover {
+            border-color: var(--dos-yellow);
+            border-style: solid;
+        }
+
+        .step-number {
+            position: absolute;
+            top: -14px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--bg-primary);
+            color: var(--dos-yellow);
+            padding: 0 8px;
+            font-family: var(--font-mono);
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .step-icon {
+            width: 64px;
+            height: 64px;
+            background: transparent;
+            border: 2px solid currentColor;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+        }
+
+        .step-content h4 {
+            font-size: 16px;
+            font-weight: bold;
+            color: var(--dos-white);
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .step-content p {
+            font-size: 14px;
+            color: var(--dos-light-cyan);
+            line-height: 1.4;
+        }
+
+        .step-connector {
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            color: var(--dos-yellow);
+            font-weight: bold;
+            font-size: 24px;
+        }
+
+        .connector-line {
+            width: 40px;
+            height: 0;
+            border-top: 2px dashed var(--dos-light-gray);
+        }
+
+        .why-section {
+            margin-bottom: 100px;
+        }
+
+        .why-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 48px;
+            align-items: center;
+            background: var(--dos-black);
+            border: 4px double var(--dos-light-gray);
+            padding: 48px;
+            box-shadow: 12px 12px 0 var(--dos-black);
+        }
+
+        .why-text h3 {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--dos-yellow);
+            margin-bottom: 16px;
+            text-transform: uppercase;
+        }
+
+        .why-text > p {
+            font-size: 14px;
+            color: var(--dos-white);
+            line-height: 1.5;
+            margin-bottom: 24px;
+        }
+
+        .why-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .why-list li {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 0;
+            font-size: 14px;
+            color: var(--dos-light-cyan);
+            border-bottom: 1px dashed var(--dos-dark-gray);
+        }
+
+        .why-list li:last-child {
+            border-bottom: none;
+        }
+
+        .why-icon {
+            flex-shrink: 0;
+            font-weight: bold;
+        }
+
+        .visual-card {
+            background: var(--dos-blue);
+            border: 2px solid var(--dos-white);
+            padding: 32px;
+            text-align: center;
+        }
+
+        .visual-chart {
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            gap: 16px;
+            height: 180px;
+            margin-bottom: 16px;
+            border-bottom: 2px solid var(--dos-white);
+            border-left: 2px solid var(--dos-white);
+            padding-bottom: 4px;
+            padding-left: 8px;
+        }
+
+        .chart-bar {
+            width: 48px;
+            background: var(--dos-dark-gray);
+            border: 2px solid var(--dos-light-gray);
+            position: relative;
+        }
+
+        .chart-bar.active {
+            background: var(--dos-light-green);
+            border-color: var(--dos-white);
+        }
+
+        .bar-label {
+            position: absolute;
+            bottom: -24px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: var(--font-mono);
+            font-size: 12px;
+            color: var(--dos-yellow);
+            font-weight: bold;
+        }
+
+        .visual-caption {
+            font-size: 14px;
+            color: var(--dos-white);
+            margin-top: 24px;
+        }
+
+        .cta-section {
+            margin-bottom: 60px;
+        }
+
+        .cta-content {
+            text-align: center;
+            padding: 60px 40px;
+            background: var(--dos-blue);
+            border: 4px solid var(--dos-white);
+            box-shadow: inset 0 0 0 4px var(--dos-blue), inset 0 0 0 6px var(--dos-yellow);
+        }
+
+        .cta-content h3 {
+            font-size: 28px;
+            font-weight: bold;
+            color: var(--dos-yellow);
+            margin-bottom: 12px;
+            text-transform: uppercase;
+        }
+
+        .cta-content p {
+            font-size: 16px;
+            color: var(--dos-white);
+            margin-bottom: 28px;
+        }
+
+        @media (max-width: 1200px) {
+            .features-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .why-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero-section {
+                padding: 48px 24px;
+                box-shadow: 8px 8px 0 var(--dos-black);
+            }
+
+            .hero-content h2 {
+                font-size: 32px;
+            }
+
+            .hero-actions {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .hero-actions .btn {
+                width: 100%;
+                max-width: 280px;
+            }
+
+            .hero-stats {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .hero-stat-divider {
+                width: 60px;
+                height: 2px;
+                border-left: none;
+                border-top: 2px dashed var(--dos-dark-gray);
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .steps-container {
+                flex-direction: column;
+                align-items: center;
+                gap: 32px;
+            }
+
+            .step {
+                max-width: 100%;
+                width: 100%;
+            }
+
+            .step-connector {
+                display: none;
+            }
+
+            .why-content {
+                padding: 24px;
+                gap: 32px;
+            }
+            
+            .visual-chart {
+                height: 140px;
+            }
+            
+            .chart-bar {
+                width: 40px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .hero-content h2 {
+                font-size: 26px;
+            }
+            .stat-number { font-size: 24px; }
+        }
+    </style>
+    <script>
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.1
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, observerOptions);
+
+            document.querySelectorAll('.animate-on-scroll').forEach(el => {
+                observer.observe(el);
+            });
+
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        window.scrollTo(0, target.offsetTop);
+                    }
+                });
+            });
+
+            const animateNumbers = () => {
+                document.querySelectorAll('.stat-number').forEach(num => {
+                    const text = num.textContent;
+                    const isNumber = !isNaN(parseInt(text));
+                    if (isNumber) {
+                        const finalNum = parseInt(text);
+                        let current = 0;
+                        const increment = Math.ceil(finalNum / 10); 
+                        const timer = setInterval(() => {
+                            current += increment;
+                            if (current >= finalNum) {
+                                num.textContent = text;
+                                clearInterval(timer);
+                            } else {
+                                // Random scrambling effect before settling
+                                num.textContent = Math.random() > 0.5 ? Math.floor(current) : "0x" + Math.floor(current).toString(16);
+                            }
+                        }, 50);
+                    }
+                });
+            };
+
+            const statsObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        animateNumbers();
+                        statsObserver.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.5 });
+
+            const heroStats = document.querySelector('.hero-stats');
+            if (heroStats) {
+                statsObserver.observe(heroStats);
+            }
+
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    const target = e.target;
+                    if (target.classList.contains('feature-card') && document.activeElement === target) {
+                        e.preventDefault();
+                        target.style.backgroundColor = 'var(--dos-white)';
+                        target.style.color = 'var(--dos-black)';
+                        setTimeout(() => {
+                            target.style.backgroundColor = '';
+                            target.style.color = '';
+                        }, 100);
+                    }
+                }
+            });
+
+            if (document.readyState === 'complete' || document.readyState === 'interactive') {
+                setTimeout(() => {
+                    document.querySelectorAll('.animate-on-scroll').forEach(el => {
+                        el.classList.add('visible');
+                    });
+                }, 100);
+            }
+        });
+    </script>
+</body>
+</html>
