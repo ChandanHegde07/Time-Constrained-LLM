@@ -84,7 +84,13 @@ This repo is now configured for Netlify static hosting with **`home.html` as the
 
 The web UI calls `/api/*` endpoints. Locally this is served by Flask (`python app.py`).
 
-For hosted mode, if your API is on another domain, you can set it in browser storage once:
+For hosted mode on Netlify, set environment variable:
+
+- `API_BASE_URL=https://your-backend.example.com`
+
+Netlify now proxies `/api/*` to that backend automatically through a function.
+
+Optional override (for testing from browser), you can still set:
 
 ```js
 localStorage.setItem('apiBaseUrl', 'https://your-backend.example.com');
