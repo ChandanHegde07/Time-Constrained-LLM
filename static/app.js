@@ -25,9 +25,43 @@ class ExperimentApp {
         return this.apiBase ? `${this.apiBase}${path}` : path;
     }
 
+    async parseResponseJson(response) {
+        const text = await response.text();
+        if (!text) {
+            return null;
+        }
+
+        try {
+            return JSON.parse(text);
+        } catch {
+            const snippet = text.slice(0, 120).replace(/\s+/g, ' ').trim();
+            throw new Error(`Expected JSON from API, got non-JSON response (${response.status}). ${snippet}`);
+        }
+    }
+
+    async apiRequest(path, options = {}) {
+        const response = await fetch(this.apiUrl(path), options);
+        const data = await this.parseResponseJson(response);
+
+        if (!response.ok) {
+            throw new Error(data?.error || `Request failed (${response.status})`);
+        }
+
+        return data;
+    }
+
     init() {
         this.bindEvents();
+        this.showApiHintIfNeeded();
         this.updateStatus();
+    }
+
+    showApiHintIfNeeded() {
+        const hostname = window.location.hostname;
+        const isLocalHost = hostname === 'localhost' || hostname === '127.0.0.1';
+        if (!this.apiBase && !isLocalHost) {
+            this.addLog('warning', 'Backend API not configured. Set localStorage apiBaseUrl to your Flask backend URL.');
+        }
     }
 
     bindEvents() {
@@ -147,23 +181,15 @@ class ExperimentApp {
         this.addLog('info', `Tasks: ${config.task_count}, Time Pressure: ${config.time_pressure_ratio}`);
 
         try {
-            const response = await fetch(this.apiUrl('/api/start'), {
+            await this.apiRequest('/api/start', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(config)
             });
-
-            const data = await response.json();
-
-            if (response.ok) {
-                this.addLog('success', 'Experiment started successfully');
-                this.startStatusPolling();
-            } else {
-                this.addLog('error', data.error || 'Failed to start experiment');
-                this.setButtonsState(false);
-            }
+            this.addLog('success', 'Experiment started successfully');
+            this.startStatusPolling();
         } catch (error) {
             this.addLog('error', `Error: ${error.message}`);
             this.setButtonsState(false);
@@ -172,18 +198,11 @@ class ExperimentApp {
 
     async stopExperiment() {
         try {
-            const response = await fetch(this.apiUrl('/api/stop'), {
+            await this.apiRequest('/api/stop', {
                 method: 'POST'
             });
-            
-            const data = await response.json();
-            
-            if (response.ok) {
-                this.addLog('warning', 'Experiment stopped by user');
-                this.stopStatusPolling();
-            } else {
-                this.addLog('error', data.error || 'Failed to stop experiment');
-            }
+            this.addLog('warning', 'Experiment stopped by user');
+            this.stopStatusPolling();
         } catch (error) {
             this.addLog('error', `Error: ${error.message}`);
         }
@@ -215,8 +234,7 @@ class ExperimentApp {
 
     async updateStatus() {
         try {
-            const response = await fetch(this.apiUrl('/api/status'));
-            const state = await response.json();
+            const state = await this.apiRequest('/api/status');
 
             // Update status indicator
             const statusDot = document.getElementById('statusDot');
@@ -314,8 +332,7 @@ class ExperimentApp {
     async loadResults() {
         try {
             console.log('Loading results...');
-            const response = await fetch(this.apiUrl('/api/results'));
-            const data = await response.json();
+            const data = await this.apiRequest('/api/results');
             console.log('Results data:', data);
             
             if (data.results && data.results.length > 0) {
@@ -396,8 +413,7 @@ class ExperimentApp {
 
     async exportJson() {
         try {
-            const response = await fetch(this.apiUrl('/api/results'));
-            const data = await response.json();
+            const data = await this.apiRequest('/api/results');
             
             const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
             this.downloadBlob(blob, 'experiment_results.json');
@@ -409,8 +425,7 @@ class ExperimentApp {
 
     async exportCsv() {
         try {
-            const response = await fetch(this.apiUrl('/api/results'));
-            const data = await response.json();
+            const data = await this.apiRequest('/api/results');
             
             if (!data.results || data.results.length === 0) {
                 this.addLog('error', 'No results to export');
@@ -475,7 +490,7 @@ class ExperimentApp {
         this.addLog('info', `Testing prompt with ${timeLimit}s time limit`);
         
         try {
-            const response = await fetch(this.apiUrl('/api/test-prompt'), {
+            const data = await this.apiRequest('/api/test-prompt', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -485,14 +500,12 @@ class ExperimentApp {
                     time_limit: timeLimit
                 })
             });
-            
-            const data = await response.json();
-            
-            if (response.ok && data.success) {
+
+            if (data && data.success) {
                 this.displayPromptResult(panel, data);
                 this.addLog('success', `Prompt test completed in ${data.response?.time_elapsed?.toFixed(2) || '0.00'}s`);
             } else {
-                this.addLog('error', data.error || 'Failed to test prompt');
+                this.addLog('error', 'Failed to test prompt');
             }
         } catch (error) {
             this.addLog('error', `Error testing prompt: ${error.message}`);
