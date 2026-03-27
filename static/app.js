@@ -5,7 +5,24 @@
 class ExperimentApp {
     constructor() {
         this.statusInterval = null;
+        this.apiBase = this.resolveApiBase();
         this.init();
+    }
+
+    resolveApiBase() {
+        const queryParams = new URLSearchParams(window.location.search);
+        const queryApiBase = queryParams.get('apiBase');
+        const localApiBase = window.localStorage.getItem('apiBaseUrl');
+        const globalApiBase = window.API_BASE_URL;
+        const selectedBase = queryApiBase || globalApiBase || localApiBase || '';
+        return selectedBase.replace(/\/+$/, '');
+    }
+
+    apiUrl(path) {
+        if (!path.startsWith('/')) {
+            return path;
+        }
+        return this.apiBase ? `${this.apiBase}${path}` : path;
     }
 
     init() {
@@ -130,7 +147,7 @@ class ExperimentApp {
         this.addLog('info', `Tasks: ${config.task_count}, Time Pressure: ${config.time_pressure_ratio}`);
 
         try {
-            const response = await fetch('/api/start', {
+            const response = await fetch(this.apiUrl('/api/start'), {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -155,7 +172,7 @@ class ExperimentApp {
 
     async stopExperiment() {
         try {
-            const response = await fetch('/api/stop', {
+            const response = await fetch(this.apiUrl('/api/stop'), {
                 method: 'POST'
             });
             
@@ -198,7 +215,7 @@ class ExperimentApp {
 
     async updateStatus() {
         try {
-            const response = await fetch('/api/status');
+            const response = await fetch(this.apiUrl('/api/status'));
             const state = await response.json();
 
             // Update status indicator
@@ -297,7 +314,7 @@ class ExperimentApp {
     async loadResults() {
         try {
             console.log('Loading results...');
-            const response = await fetch('/api/results');
+            const response = await fetch(this.apiUrl('/api/results'));
             const data = await response.json();
             console.log('Results data:', data);
             
@@ -379,7 +396,7 @@ class ExperimentApp {
 
     async exportJson() {
         try {
-            const response = await fetch('/api/results');
+            const response = await fetch(this.apiUrl('/api/results'));
             const data = await response.json();
             
             const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
@@ -392,7 +409,7 @@ class ExperimentApp {
 
     async exportCsv() {
         try {
-            const response = await fetch('/api/results');
+            const response = await fetch(this.apiUrl('/api/results'));
             const data = await response.json();
             
             if (!data.results || data.results.length === 0) {
@@ -458,7 +475,7 @@ class ExperimentApp {
         this.addLog('info', `Testing prompt with ${timeLimit}s time limit`);
         
         try {
-            const response = await fetch('/api/test-prompt', {
+            const response = await fetch(this.apiUrl('/api/test-prompt'), {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

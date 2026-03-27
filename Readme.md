@@ -65,6 +65,34 @@ Then open **http://localhost:5001** in your browser.
 - **Export** — Download results as JSON or CSV.
 - **Custom Prompt Testing** — Test your own prompts with time constraints.
 
+### Deploy on Netlify
+
+This repo is now configured for Netlify static hosting with **`home.html` as the entry page**.
+
+- `/` routes to `home.html`
+- `/experiment` routes to `experiment.html`
+- Static assets are served from `/static/*`
+
+#### Steps
+1. Push this repo to GitHub.
+2. In Netlify, click **Add new site** → **Import an existing project**.
+3. Select this repository.
+4. Keep build command empty (not required), publish directory is already configured by `netlify.toml`.
+5. Deploy.
+
+#### Backend/API behavior
+
+The web UI calls `/api/*` endpoints. Locally this is served by Flask (`python app.py`).
+
+For hosted mode, if your API is on another domain, you can set it in browser storage once:
+
+```js
+localStorage.setItem('apiBaseUrl', 'https://your-backend.example.com');
+```
+
+Then reload the page. The frontend will call:
+`https://your-backend.example.com/api/...`
+
 ### API Endpoints
 
 | Endpoint | Method | Description |
