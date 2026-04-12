@@ -239,15 +239,6 @@ python run_pipeline.py --name task_sensitivity \
   --difficulty 2 3 4 5 --pressure-ratio 0.6
 ```
 
-**Provider Comparison**  
-Benchmark different models side by side:
-```bash
-python run_pipeline.py --name provider_comparison \
-  --tasks 50 --time-limits 5 \
-  --categories reasoning --difficulty 3 --pressure-ratio 1.0 \
-  --config '{"llm": {"provider": "google", "model": "gemini-1.5-pro"}}'
-```
-
 ---
 
 ## Metrics
